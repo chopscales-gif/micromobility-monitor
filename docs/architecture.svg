@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" font-family="Figtree, 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="t d">
   <title id="t">Micromobility Monitor architecture</title>
-  <desc id="d">Simulated operators serve GBFS and MDS feeds. A worker polls and validates them and writes to PostgreSQL with PostGIS. A Next.js application reads the database and serves the staff console, the operator portal and the public open-data page. Every console query passes a permission guard and is written to the audit log. Mail goes to an outbox table, not to a mail server.</desc>
+  <desc id="d">Simulated operators serve GBFS and MDS feeds. The simulator runs as its own process or inside the worker. A worker polls and validates them and writes to PostgreSQL with PostGIS. A Next.js application reads the database and serves the staff console, the operator portal and the public open-data page. Every console query passes a permission guard and is written to the audit log. Mail goes to an outbox table, not to a mail server.</desc>
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5b6570"/></marker>
     <filter id="s" x="-5%" y="-5%" width="110%" height="125%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1b232b" flood-opacity="0.10"/></filter>
@@ -19,7 +19,7 @@
     <rect x="40" y="60" width="240" height="330" rx="12" fill="#ffffff" stroke="#dfe2de"/>
   </g>
   <text x="60" y="92" font-size="16" font-weight="600" fill="#161b20">Simulator</text>
-  <text x="60" y="112" font-size="13" fill="#5b6570">apps/simulator, port 4010</text>
+  <text x="60" y="112" font-size="13" fill="#5b6570">its own process, or inside the worker</text>
   <g font-size="14" fill="#161b20">
     <circle cx="67" cy="146" r="5" fill="#3b6fd6"/><text x="82" y="151">Kestrel Mobility</text>
     <rect x="62" y="169" width="10" height="10" transform="rotate(45 67 174)" fill="#c9408f"/><text x="82" y="179">Pronghorn Rides</text>

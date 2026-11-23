@@ -104,7 +104,7 @@ function Fleets({ report }: { report: MonthlyReport }) {
   return (
     <Sheet title="By operator" note="rides per vehicle per day counts every vehicle on the operator's roster during the month">
       <div className="overflow-x-auto">
-        <table className="grid-table">
+        <table className="grid-table stack">
           <thead>
             <tr>
               <th>Operator</th>
@@ -123,25 +123,25 @@ function Fleets({ report }: { report: MonthlyReport }) {
                 <td>
                   <Operator slug={o.slug} name={o.name} />
                 </td>
-                <td className="r font-semibold">{count(o.trips)}</td>
-                <td className="r">{share(o.trips)}</td>
-                <td className="r">{count(o.vehicles)}</td>
-                <td className="r font-semibold">{rate(o.perVehicleDay)}</td>
-                <td className="r">{km(o.medianDistanceM)}</td>
-                <td className="r">{minutes(o.medianDurationS)}</td>
-                <td className="r">{o.trips > 0 ? percent(o.equityTrips / o.trips, 0) : "no data"}</td>
+                <td className="r font-semibold" data-label="Rides">{count(o.trips)}</td>
+                <td className="r" data-label="Share">{share(o.trips)}</td>
+                <td className="r" data-label="Vehicles">{count(o.vehicles)}</td>
+                <td className="r font-semibold" data-label="Rides per vehicle per day">{rate(o.perVehicleDay)}</td>
+                <td className="r" data-label="Typical distance">{km(o.medianDistanceM)}</td>
+                <td className="r" data-label="Typical time">{minutes(o.medianDurationS)}</td>
+                <td className="r" data-label="Touching an equity zone">{o.trips > 0 ? percent(o.equityTrips / o.trips, 0) : "no data"}</td>
               </tr>
             ))}
             {report.types.map((t) => (
               <tr key={t.type} className="text-dim">
                 <td>{typeLine(t.type)}</td>
-                <td className="r">{count(t.trips)}</td>
-                <td className="r">{share(t.trips)}</td>
-                <td className="r">{count(t.vehicles)}</td>
-                <td className="r">{rate(t.perVehicleDay)}</td>
-                <td className="r">{km(t.medianDistanceM)}</td>
-                <td className="r">{minutes(t.medianDurationS)}</td>
-                <td className="r">{t.trips > 0 ? percent(t.equityTrips / t.trips, 0) : "no data"}</td>
+                <td className="r" data-label="Rides">{count(t.trips)}</td>
+                <td className="r" data-label="Share">{share(t.trips)}</td>
+                <td className="r" data-label="Vehicles">{count(t.vehicles)}</td>
+                <td className="r" data-label="Rides per vehicle per day">{rate(t.perVehicleDay)}</td>
+                <td className="r" data-label="Typical distance">{km(t.medianDistanceM)}</td>
+                <td className="r" data-label="Typical time">{minutes(t.medianDurationS)}</td>
+                <td className="r" data-label="Touching an equity zone">{t.trips > 0 ? percent(t.equityTrips / t.trips, 0) : "no data"}</td>
               </tr>
             ))}
           </tbody>
@@ -198,7 +198,7 @@ function Compliance({ report }: { report: MonthlyReport }) {
       }
     >
       <div className="overflow-x-auto">
-        <table className="grid-table">
+        <table className="grid-table stack">
           <thead>
             <tr>
               <th>Operator</th>
@@ -220,15 +220,15 @@ function Compliance({ report }: { report: MonthlyReport }) {
                 {c.rules.map((r) => {
                   const clear = weeks - (o.byRule[r.kind] ?? 0);
                   return (
-                    <td key={r.kind} className="r" style={{ color: clear === weeks ? undefined : clear === 0 ? "var(--color-poor)" : "var(--color-fair)" }}>
+                    <td key={r.kind} className="r" data-label={r.label} style={{ color: clear === weeks ? undefined : clear === 0 ? "var(--color-poor)" : "var(--color-fair)" }}>
                       <span className={clear === weeks ? "" : "font-semibold"}>
                         {clear} of {weeks}
                       </span>
                     </td>
                   );
                 })}
-                <td className="r font-semibold">{percent(o.rate, 0)}</td>
-                <td className="r">{count(o.notices)}</td>
+                <td className="r font-semibold" data-label="All rules">{percent(o.rate, 0)}</td>
+                <td className="r" data-label="Notices sent">{count(o.notices)}</td>
               </tr>
             ))}
           </tbody>
@@ -259,7 +259,7 @@ function Revenue({ report }: { report: MonthlyReport }) {
       ) : (
         <>
           <div className="overflow-x-auto">
-            <table className="grid-table">
+            <table className="grid-table stack">
               <thead>
                 <tr>
                   <th>Operator</th>
@@ -277,30 +277,32 @@ function Revenue({ report }: { report: MonthlyReport }) {
                     <td>
                       <Operator slug={i.slug} name={i.name} />
                     </td>
-                    <td className="whitespace-nowrap">
-                      <Link href={`/invoices/${i.number}`} className="link">
-                        {i.number}
-                      </Link>{" "}
-                      <Status color={i.status === "issued" ? "var(--color-good)" : "var(--color-held)"} className="ml-2">
-                        {i.status === "issued" ? "Issued" : "Draft"}
-                      </Status>
+                    <td className="whitespace-nowrap" data-label="Invoice">
+                      <span>
+                        <Link href={`/invoices/${i.number}`} className="link">
+                          {i.number}
+                        </Link>{" "}
+                        <Status color={i.status === "issued" ? "var(--color-good)" : "var(--color-held)"} className="ml-2">
+                          {i.status === "issued" ? "Issued" : "Draft"}
+                        </Status>
+                      </span>
                     </td>
-                    <td className="r">{formatCents(i.deviceCents)}</td>
-                    <td className="r">{formatCents(i.rideCents)}</td>
-                    <td className="r">{count(i.billableTrips)}</td>
-                    <td className="r">{formatCents(i.waivedCents)}</td>
-                    <td className="r font-semibold">{formatCents(i.totalCents)}</td>
+                    <td className="r" data-label="Device fees">{formatCents(i.deviceCents)}</td>
+                    <td className="r" data-label="Ride fees">{formatCents(i.rideCents)}</td>
+                    <td className="r" data-label="Billable rides">{count(i.billableTrips)}</td>
+                    <td className="r" data-label="Waived for equity zones">{formatCents(i.waivedCents)}</td>
+                    <td className="r font-semibold" data-label="Total">{formatCents(i.totalCents)}</td>
                   </tr>
                 ))}
                 <tr>
                   <td className="font-semibold" colSpan={2}>
                     All operators
                   </td>
-                  <td className="r">{formatCents(r.rows.reduce((s, i) => s + i.deviceCents, 0))}</td>
-                  <td className="r">{formatCents(r.rows.reduce((s, i) => s + i.rideCents, 0))}</td>
-                  <td className="r">{count(r.rows.reduce((s, i) => s + i.billableTrips, 0))}</td>
-                  <td className="r">{formatCents(r.waivedCents)}</td>
-                  <td className="r font-semibold">{formatCents(r.totalCents)}</td>
+                  <td className="r" data-label="Device fees">{formatCents(r.rows.reduce((s, i) => s + i.deviceCents, 0))}</td>
+                  <td className="r" data-label="Ride fees">{formatCents(r.rows.reduce((s, i) => s + i.rideCents, 0))}</td>
+                  <td className="r" data-label="Billable rides">{count(r.rows.reduce((s, i) => s + i.billableTrips, 0))}</td>
+                  <td className="r" data-label="Waived for equity zones">{formatCents(r.waivedCents)}</td>
+                  <td className="r font-semibold" data-label="Total">{formatCents(r.totalCents)}</td>
                 </tr>
               </tbody>
             </table>
@@ -387,7 +389,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
         <Hours report={report} />
         <Sheet title="Equity zones" note={`${percent(equityShare, 0)} of rides started, ended or passed through one`}>
           <div className="overflow-x-auto">
-          <table className="grid-table">
+          <table className="grid-table stack">
             <thead>
               <tr>
                 <th>Zone</th>
@@ -401,8 +403,8 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                   <td>
                     <Status color="var(--color-zone-equity)">{z.name}</Status>
                   </td>
-                  <td className="r font-semibold">{count(z.starts)}</td>
-                  <td className="r font-semibold">{count(z.ends)}</td>
+                  <td className="r font-semibold" data-label="Rides started">{count(z.starts)}</td>
+                  <td className="r font-semibold" data-label="Rides ended">{count(z.ends)}</td>
                 </tr>
               ))}
             </tbody>

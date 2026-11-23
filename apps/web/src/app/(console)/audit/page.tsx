@@ -67,7 +67,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
           <p className="py-3 text-dim">Nothing of this kind on record yet.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="grid-table min-w-[58rem] [&_tbody_tr:last-child_td]:border-b-0">
+            <table className="grid-table stack sm:min-w-[58rem] [&_tbody_tr:last-child_td]:border-b-0">
               <thead>
                 <tr>
                   <th>When</th>
@@ -85,19 +85,21 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                   return (
                     <tr key={e.id}>
                       <td className="whitespace-nowrap text-dim">{dateTime(e.at)}</td>
-                      <td className="whitespace-nowrap">
-                        <span className="font-medium">{e.userName}</span>
-                        <span className="block text-[0.8125rem] text-dim">{ROLE_LABELS[e.role as keyof typeof ROLE_LABELS] ?? e.role}</span>
+                      <td className="whitespace-nowrap" data-label="Who">
+                        <div>
+                          <span className="font-medium">{e.userName}</span>
+                          <span className="block text-[0.8125rem] text-dim">{ROLE_LABELS[e.role as keyof typeof ROLE_LABELS] ?? e.role}</span>
+                        </div>
                       </td>
-                      <td className={`whitespace-nowrap ${e.action === "read" ? "text-dim" : "font-medium"}`}>{KIND[e.action] ?? e.action}</td>
-                      <td className="min-w-[16rem]">
+                      <td className={`whitespace-nowrap ${e.action === "read" ? "text-dim" : "font-medium"}`} data-label="Kind">{KIND[e.action] ?? e.action}</td>
+                      <td className="sm:min-w-[16rem]">
                         {sentence(e)}
                         {more && <span className="block text-[0.8125rem] text-dim">{more}</span>}
                       </td>
-                      <td className="whitespace-nowrap">
+                      <td className="whitespace-nowrap" data-label="Operator&rsquo;s data">
                         {e.operatorName === null ? <span className="text-dim">All operators</span> : slug ? <Operator slug={slug} name={e.operatorName} className="!font-normal" /> : e.operatorName}
                       </td>
-                      <td>{e.allowed ? <span className="text-dim">Allowed</span> : <Status color="var(--color-poor)">Refused</Status>}</td>
+                      <td data-label="Outcome">{e.allowed ? <span className="text-dim">Allowed</span> : <Status color="var(--color-poor)">Refused</Status>}</td>
                     </tr>
                   );
                 })}

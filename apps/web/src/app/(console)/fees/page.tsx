@@ -161,7 +161,7 @@ export default async function FeesPage({ searchParams }: Props) {
             <small>the device fee is charged on these, for the days each permit is in force</small>
           </h2>
           <div className="overflow-x-auto">
-            <table className="grid-table">
+            <table className="grid-table stack">
               <thead>
                 <tr>
                   <th>Operator</th>
@@ -178,18 +178,20 @@ export default async function FeesPage({ searchParams }: Props) {
                       <td>
                         <Operator slug={operator} name={permits[0]!.operatorName} />
                       </td>
-                      <td className="r font-semibold">{count(live.reduce((sum, p) => sum + p.devices, 0))}</td>
-                      <td className="font-medium">Today</td>
+                      <td className="r font-semibold" data-label="Devices today">{count(live.reduce((sum, p) => sum + p.devices, 0))}</td>
+                      <td className="font-medium max-sm:hidden">Today</td>
                       <td className="max-sm:hidden" />
                     </tr>
                     {permits.map((p) => (
                       <tr key={p.id} className="text-dim">
                         <td />
-                        <td className="r">{count(p.devices)}</td>
-                        <td className="sm:whitespace-nowrap">
-                          From {plainDate(p.startDate)}
-                          {p.endDate ? ` to ${plainDate(p.endDate)}` : ""}
-                          {p.note ? <span className="block text-[0.8125rem] sm:hidden">{p.note}</span> : null}
+                        <td className="r" data-label="Devices">{count(p.devices)}</td>
+                        <td className="sm:whitespace-nowrap" data-label="In force">
+                          <div>
+                            From {plainDate(p.startDate)}
+                            {p.endDate ? ` to ${plainDate(p.endDate)}` : ""}
+                            {p.note ? <span className="block text-[0.8125rem] sm:hidden">{p.note}</span> : null}
+                          </div>
                         </td>
                         <td className="min-w-[10rem] max-sm:hidden">{p.note}</td>
                       </tr>
@@ -255,7 +257,7 @@ export default async function FeesPage({ searchParams }: Props) {
           <section className="panel px-5 pb-4 pt-4">
             <h2 className="heading">Every schedule on record</h2>
             <div className="overflow-x-auto">
-              <table className="grid-table">
+              <table className="grid-table stack">
                 <thead>
                   <tr>
                     <th>Effective</th>
@@ -270,11 +272,11 @@ export default async function FeesPage({ searchParams }: Props) {
                     const state = s.id === current?.id ? "In force" : s.effectiveFrom > today ? "Upcoming" : "Superseded";
                     return (
                       <tr key={s.id}>
-                        <td className="whitespace-nowrap">{plainDate(s.effectiveFrom)}</td>
-                        <td className="r">{formatCents(s.perDeviceAnnualCents)}</td>
-                        <td className="r">{formatCents(s.perRideCents)}</td>
-                        <td className="whitespace-nowrap">{s.createdBy}</td>
-                        <td>
+                        <td className="whitespace-nowrap max-sm:font-medium">{plainDate(s.effectiveFrom)}</td>
+                        <td className="r" data-label="Device, per year">{formatCents(s.perDeviceAnnualCents)}</td>
+                        <td className="r" data-label="Ride">{formatCents(s.perRideCents)}</td>
+                        <td className="whitespace-nowrap" data-label="Adopted by">{s.createdBy}</td>
+                        <td data-label="Status">
                           <Status color={state === "In force" ? "var(--color-good)" : state === "Upcoming" ? "var(--color-fair)" : "var(--color-dim)"}>{state}</Status>
                         </td>
                       </tr>

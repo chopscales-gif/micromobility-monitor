@@ -91,9 +91,13 @@ If you have another minute
 
   Audit log (Program manager or IT administrator seat): the clicks you just made.
 
-After the demo, reset what you changed:
+After the demo, put back what you changed. On a copy started with DEMO_RESET=1, use
+"Reset it now" in the strip at the top of the console: it restores the zones, rules,
+fee schedules, invoices and cases, and empties the audit log. Otherwise:
 
   npm run db:seed -- --violations
+
+which rebuilds the cases, findings, alerts and outbox only.
 
 
 Built by ChopMedia as a portfolio demonstration.

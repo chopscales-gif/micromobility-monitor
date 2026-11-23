@@ -37,6 +37,9 @@ services:
       # A throwaway key for the local demo, where the only "secrets" are the fictional operators' tokens. Set a real one anywhere else.
       TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:-00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff}
       SEED_IF_EMPTY: "1"
+      # For a copy that strangers share, add DEMO_RESET: "1" (puts the demonstration back each night and on request;
+      # see docs/deploy-guide.txt). SIMULATOR_INPROCESS: "1" lets the worker answer the feeds itself, and the simulator
+      # service above can then be removed.
     depends_on:
       db:
         condition: service_healthy

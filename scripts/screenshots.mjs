@@ -115,7 +115,15 @@ async function main() {
       // The development badge is not part of the product.
       await evaluate(`document.querySelectorAll('nextjs-portal').forEach(n => n.remove())`);
       if (shot.scrollTo) {
-        await evaluate(`(() => { const el = [...document.querySelectorAll('h1,h2,h3')].find(h => h.textContent.includes(${JSON.stringify(shot.scrollTo)})); el?.closest('section,.panel')?.scrollIntoView({ block: 'center' }) ?? el?.scrollIntoView(); })()`);
+        // Start the shot at the section's top edge, clear of the strip pinned to the top of the page,
+        // so nothing above it is cut in half.
+        await evaluate(`(() => {
+          const heading = [...document.querySelectorAll('h1,h2,h3')].find(h => h.textContent.includes(${JSON.stringify(shot.scrollTo)}));
+          const el = heading?.closest('section,.panel') ?? heading;
+          if (!el) return;
+          const scroller = document.querySelector('.frame-main') ?? window;
+          scroller.scrollBy(0, el.getBoundingClientRect().top - 46);
+        })()`);
         await sleep(600);
       }
       const measure = await evaluate(`(() => {

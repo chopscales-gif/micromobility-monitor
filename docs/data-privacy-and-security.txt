@@ -108,9 +108,13 @@ Stated plainly:
   The background worker's own activity (reading feeds, deleting expired paths) goes
   to the worker's log, not the audit log.
 
-  The log is an ordinary database table. The application only adds to it, but nothing
-  in this build stops a database administrator from altering it. A production
-  deployment should ship it to write-once storage.
+  The log is an ordinary database table. The application only adds to it, with one
+  exception that exists for the demonstration: when DEMO_RESET is set, the reset that
+  puts a shared copy back as it was seeded empties the log along with everything
+  else, and any seat can ask for it. The setting is off unless the host turns it on,
+  and must stay off anywhere the log matters. Nothing in this build stops a database
+  administrator from altering the table either. A production deployment should ship
+  the log to write-once storage.
 
 
 6. Sign-in

@@ -312,6 +312,51 @@ body {
   table.grid-table .r {
     text-align: right;
   }
+  /* On a phone a wide table is read a row at a time: each row becomes a short list, the first cell
+     its title and every other cell a line with its column's name (data-label) beside it. */
+  @media (max-width: 39.999rem) {
+    table.grid-table.stack,
+    table.grid-table.stack tbody,
+    table.grid-table.stack tr,
+    table.grid-table.stack td {
+      display: block;
+    }
+    table.grid-table.stack thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    table.grid-table.stack tr {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--color-line);
+    }
+    table.grid-table.stack td {
+      padding: 0.1875rem 0;
+      border-bottom: 0;
+      text-align: left;
+    }
+    table.grid-table.stack td:empty {
+      display: none;
+    }
+    table.grid-table.stack td[data-label] {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      text-align: right;
+    }
+    table.grid-table.stack td[data-label]::before {
+      content: attr(data-label);
+      flex: none;
+      max-width: 60%;
+      text-align: left;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: var(--color-faint);
+    }
+  }
 }
 
 :focus-visible {

@@ -42,7 +42,8 @@ To reset the demo after trying the forms, without rebuilding the history:
 
 That rebuilds the cases, findings, alerts and outbox in a few seconds. It does not
 undo a new fee schedule, a new or retired zone, a changed rule or an issued invoice.
-For those, drop the database volume and seed again.
+For those, start the web application with DEMO_RESET=1 and use "Reset it now" in the
+strip at the top of the console (section 4), or drop the database volume and seed again.
 
 
 3. Run it with one command (written, not yet run)
@@ -65,7 +66,21 @@ They are for a local demonstration only.
   TOKEN_ENCRYPTION_KEY    Required. 64 hexadecimal characters. Encrypts the
                           operators' feed tokens. Keep it out of the repository.
                           Changing it makes the stored tokens unreadable.
-  SIMULATOR_URL           Where the worker and the seed find the simulator.
+  SIMULATOR_URL           Where the worker finds the simulator, and the address the
+                          seed registers for each operator's feeds.
+  SIMULATOR_INPROCESS     Set to 1 on the worker to answer the operators' feeds
+                          inside the worker itself. The simulator process is then
+                          not needed. The feeds are the same ones, built by the
+                          same code, still checked for the operator's token; only
+                          the network hop is skipped. Unset by default.
+  DEMO_RESET              Set to 1 for a copy that strangers share. On the worker
+                          it puts the demonstration back as it was seeded every
+                          night at 10:00 UTC (3 or 4 in the morning in Salt Lake
+                          City). On the web application it adds a line to the
+                          strip at the top of the console, saying that other
+                          visitors see what is changed, with a "Reset it now"
+                          control any seat can use. Unset by default: without it
+                          nothing can clear the audit log.
   SIMULATOR_PUBLIC_URL    The simulator's own address, as it should appear in the
                           feed links it publishes.
   DATABASE_SSL            Unset locally. Set to require, or verify-full, for any
@@ -87,15 +102,37 @@ needs, and the work still open:
   machine with Docker, running the compose file behind a proxy that provides HTTPS
   (Caddy or similar). A container platform with a managed PostgreSQL also fits if
   it offers PostGIS and always-on workers. A serverless host can carry the web
-  application alone, but the worker and the simulator would need a home elsewhere.
+  application alone, but the worker would need a home elsewhere.
 
-  Running the simulator inside the worker, to save a process on a hosted copy, was
-  planned and is not built. Today the simulator is its own process.
+  Two processes, not three. With SIMULATOR_INPROCESS=1 the worker answers the
+  operators' feeds itself and the simulator process can be left out. Tested on the
+  development machine: with the simulator stopped, every feed request in the
+  following minutes was answered. Not tested on a host.
 
   The forms are live. Anyone who opens a public copy can adopt a fee schedule,
   retire a zone, change a rule or close a case, and the next visitor sees the
-  result. Before sharing a public link, either reset the data on a schedule or make
-  the public copy read-only. Neither is built.
+  result. Set DEMO_RESET=1 on the worker and the web application before sharing a
+  public link. What the reset does: removes zones that were added and restores
+  ones that were retired, re-adopts the rules, removes fee schedules added since
+  the seed, returns the invoices to how they were seeded, rebuilds the cases,
+  findings, alerts and outbox, and empties the audit log. It takes about four
+  seconds on the seeded month. Its limits:
+
+    Between resets, visitors still see one another's changes.
+
+    A reset pressed by one visitor interrupts any other visitor who is part way
+    through a case. The control cannot be used twice within a minute.
+
+    For those few seconds the case list is part built.
+
+    Rides recorded while a visitor's zone existed, or while a seeded zone was
+    retired, keep the zone flags they were given at the time.
+
+    Alerts and mail the worker wrote from live feeds since the seed (a feed that
+    dropped this morning, say) are cleared and are not written again.
+
+    Case numbers are stable from one reset to the next on the same day, but shift
+    as new weeks of history arrive on a copy left running.
 
   Replace the placeholder key and the database password. Set DATABASE_SSL. Serve
   the site over HTTPS only: the application sends Strict-Transport-Security and

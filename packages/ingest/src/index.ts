@@ -8,3 +8,4 @@ export * from "./violations";
 export * from "./cases";
 export * from "./alerts";
 export * from "./monthly";
+export * from "./demo-state";

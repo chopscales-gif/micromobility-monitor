@@ -6,16 +6,19 @@
 //                               are raised for whoever needs to know and the daily summaries written to the outbox
 //   daily    once a day        vehicle roster, operators' monthly reports, invoices, the city's own monthly report to the outbox,
 //                               clearing old location points and routes past their keeping time
+//   reset    once a night      only with DEMO_RESET set: puts the demonstration back as it was seeded (see demo-state.ts)
 //
 // Each job is safe to repeat, so a missed or doubled run does no harm.
 
 import { localDate, routeRetentionDays } from "@mm/core";
 import { connect } from "@mm/db";
-import { catchUp, createContext, detectViolations, fetchReport, raiseAlerts, sendDigests, generateInvoice, httpFetcher, loadOperators, pollRealtime, loadZones, pollRoster, monthEnd, purgeTelemetry, TELEMETRY_KEEP_MS } from "@mm/ingest";
+import { catchUp, createContext, detectViolations, fetchReport, raiseAlerts, resetDemo, sendDigests, generateInvoice, loadOperators, pollRealtime, loadZones, pollRoster, monthEnd, purgeTelemetry, TELEMETRY_KEEP_MS } from "@mm/ingest";
 import { PgBoss } from "pg-boss";
+import { feedFetcher } from "./feeds";
 
 const { sql } = connect(undefined, { max: 4 });
-const ctx = await createContext(sql, httpFetcher);
+const feeds = await feedFetcher(sql);
+const ctx = await createContext(sql, feeds.fetcher);
 const boss = new PgBoss(process.env.DATABASE_URL!);
 boss.on("error", (error) => console.error("Queue error:", error));
 
@@ -66,11 +69,20 @@ async function daily() {
   if (done.purged > 0) ctx.log(`Routes older than ${done.retentionDays} days deleted from ${done.purged} rides`);
 }
 
+/** Visitors to a hosted demonstration share one database; each night it is put back as it was seeded. */
+async function reset() {
+  ctx.log((await resetDemo(sql)) ? "Demonstration reset: zones, rules, fees, invoices, cases, alerts, outbox and audit log are as seeded" : "Demonstration reset skipped: one was already running");
+}
+
+const DEMO_RESET = Boolean(process.env.DEMO_RESET);
+
 const jobs: [name: string, cron: string, run: () => Promise<void>][] = [
   ["live", "* * * * *", live],
   ["hourly", "*/5 * * * *", hourly],
   ["rules", "*/10 * * * *", rules],
   ["daily", "20 9 * * *", daily],
+  // 10:00 UTC is three or four in the morning in the demonstration's city.
+  ...(DEMO_RESET ? ([["reset", "0 10 * * *", reset]] as [string, string, () => Promise<void>][]) : []),
 ];
 
 await boss.start();
@@ -86,7 +98,9 @@ for (const [name, cron, run] of jobs) {
     }
   });
 }
-console.log("Worker started: polling operator feeds.");
+// A schedule outlives the process that made it; without the setting, no reset is left waiting in the queue.
+if (!DEMO_RESET) await boss.unschedule("reset").catch(() => {});
+console.log(`Worker started: polling operator feeds${feeds.inProcess ? `, simulated inside this process at ${feeds.inProcess}` : ""}.${DEMO_RESET ? " The demonstration is reset each night." : ""}`);
 // Catch up straight away rather than waiting for the first tick.
 await live().catch((error) => console.error(error));
 await hourly().catch((error) => console.error(error));

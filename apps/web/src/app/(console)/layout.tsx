@@ -2,11 +2,13 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { can, ROLE_LABELS, type Permission } from "@mm/core/access";
 import { CITY_NAME } from "@mm/core/city";
+import { DemoReset } from "@/components/DemoReset";
 import { Nav } from "@/components/Nav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ViewAs } from "@/components/ViewAs";
 import { THEME_COOKIE, type Theme } from "@/lib/theme";
 import { unreadCount } from "@/server/alerts";
+import { demoResetEnabled } from "@/server/demo";
 import { currentPerson, listPeople } from "@/server/session";
 
 type Section = { href: string; label: string; needs?: Permission; operatorLabel?: string; operatorOnly?: boolean };
@@ -43,6 +45,12 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
           <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-4 py-1.5">
             <p className="leading-snug">
               <strong className="font-semibold">Demonstration.</strong> <span className="text-white/75">Simulated data from three fictional operators. Not used by, or affiliated with, any city.</span>
+              {demoResetEnabled() && (
+                <>
+                  {" "}
+                  <span className="text-white/75">Other visitors see what you change here, until it is put back each night.</span> <DemoReset />
+                </>
+              )}
             </p>
             <ViewAs current={person.userId} people={people.map((p) => ({ userId: p.userId, name: p.name, title: p.title, roleLabel: ROLE_LABELS[p.role] }))} />
           </div>

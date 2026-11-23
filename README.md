@@ -133,7 +133,9 @@ npm run dev:worker          # terminal 2: polls the feeds
 npm run dev:web             # terminal 3: http://localhost:3000
 ```
 
-`npm run db:seed -- --violations` rebuilds only the cases, findings, alerts and outbox from the stored history, in a few seconds. Use it to reset the demo after trying the forms.
+`npm run db:seed -- --violations` rebuilds only the cases, findings, alerts and outbox from the stored history, in a few seconds.
+
+Two settings are for a copy that strangers share. `DEMO_RESET=1` puts everything a visitor can change back as it was seeded, every night and on request from the strip at the top of the console. `SIMULATOR_INPROCESS=1` makes the worker answer the operators' feeds itself, so the simulator does not need a process of its own.
 
 `npm run demo` (Docker Compose: database, simulator, seed, worker and web in one command) is written but has not been run end to end yet. The [deploy guide](docs/deploy-guide.txt) covers it, the settings, and what a hosted copy would still need.
 
