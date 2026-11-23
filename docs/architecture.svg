@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" font-family="Figtree, 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="t d">
+  <title id="t">Micromobility Monitor architecture</title>
+  <desc id="d">Simulated operators serve GBFS and MDS feeds. A worker polls and validates them and writes to PostgreSQL with PostGIS. A Next.js application reads the database and serves the staff console, the operator portal and the public open-data page. Every console query passes a permission guard and is written to the audit log. Mail goes to an outbox table, not to a mail server.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5b6570"/></marker>
+    <filter id="s" x="-5%" y="-5%" width="110%" height="125%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1b232b" flood-opacity="0.10"/></filter>
+  </defs>
+  <rect width="1200" height="660" fill="#f4f5f3"/>
+
+  <g font-size="13" fill="#6b747d">
+    <text x="40" y="44">Operators (simulated in this demonstration)</text>
+    <text x="352" y="44">Background worker</text>
+    <text x="640" y="44">Database</text>
+    <text x="912" y="44">Web application and who uses it</text>
+  </g>
+
+  <!-- Operators -->
+  <g filter="url(#s)">
+    <rect x="40" y="60" width="240" height="330" rx="12" fill="#ffffff" stroke="#dfe2de"/>
+  </g>
+  <text x="60" y="92" font-size="16" font-weight="600" fill="#161b20">Simulator</text>
+  <text x="60" y="112" font-size="13" fill="#5b6570">apps/simulator, port 4010</text>
+  <g font-size="14" fill="#161b20">
+    <circle cx="67" cy="146" r="5" fill="#3b6fd6"/><text x="82" y="151">Kestrel Mobility</text>
+    <rect x="62" y="169" width="10" height="10" transform="rotate(45 67 174)" fill="#c9408f"/><text x="82" y="179">Pronghorn Rides</text>
+    <rect x="62" y="197" width="10" height="10" fill="#8a8a24"/><text x="82" y="207">Saltgrass Bikeshare</text>
+  </g>
+  <line x1="60" y1="228" x2="260" y2="228" stroke="#e6e8e5"/>
+  <g font-size="13" fill="#5b6570">
+    <text x="60" y="254" fill="#161b20" font-weight="600">GBFS 3.0</text>
+    <text x="60" y="273">public vehicle and station feeds</text>
+    <text x="60" y="304" fill="#161b20" font-weight="600">MDS Provider API</text>
+    <text x="60" y="323">trips, vehicle status, events,</text>
+    <text x="60" y="341">monthly reports; a bearer</text>
+    <text x="60" y="359">token per operator</text>
+  </g>
+
+  <!-- Worker -->
+  <g filter="url(#s)">
+    <rect x="352" y="60" width="220" height="330" rx="12" fill="#ffffff" stroke="#dfe2de"/>
+  </g>
+  <text x="372" y="92" font-size="16" font-weight="600" fill="#161b20">Worker</text>
+  <text x="372" y="112" font-size="13" fill="#5b6570">apps/worker, packages/ingest</text>
+  <g font-size="13.5" fill="#161b20">
+    <text x="372" y="148">Poll each feed on a schedule</text>
+    <text x="372" y="176">Check every record against</text>
+    <text x="372" y="194">the published schema</text>
+    <text x="372" y="222">Score feed health</text>
+    <text x="372" y="250">Judge the rules, file findings</text>
+    <text x="372" y="268">and gather them into cases</text>
+    <text x="372" y="296">Build invoices and reports</text>
+    <text x="372" y="324">Write alerts and outbox mail</text>
+    <text x="372" y="352">Delete ride paths past retention</text>
+  </g>
+  <text x="372" y="376" font-size="12" fill="#6b747d">jobs queued in Postgres (pg-boss)</text>
+
+  <!-- Database -->
+  <g filter="url(#s)">
+    <rect x="640" y="60" width="200" height="330" rx="12" fill="#1b232b"/>
+  </g>
+  <text x="660" y="92" font-size="16" font-weight="600" fill="#ffffff">PostgreSQL + PostGIS</text>
+  <text x="660" y="112" font-size="13" fill="#a8b1ba">packages/db</text>
+  <g font-size="13.5" fill="#e6eaee">
+    <text x="660" y="148">Vehicle status and trips</text>
+    <text x="660" y="174">Feed checks and failures</text>
+    <text x="660" y="200">Zones, rules, fee schedules</text>
+    <text x="660" y="226">Findings, cases, notices</text>
+    <text x="660" y="252">Invoices, monthly reports</text>
+    <text x="660" y="278">Alerts and outbox</text>
+    <text x="660" y="304">Audit log</text>
+    <text x="660" y="330">Operator tokens, encrypted</text>
+    <text x="660" y="348" font-size="12" fill="#a8b1ba">AES-256-GCM, key from the</text>
+    <text x="660" y="364" font-size="12" fill="#a8b1ba">environment</text>
+  </g>
+
+  <!-- Web -->
+  <g filter="url(#s)">
+    <rect x="912" y="60" width="248" height="330" rx="12" fill="#ffffff" stroke="#dfe2de"/>
+  </g>
+  <text x="932" y="92" font-size="16" font-weight="600" fill="#161b20">Next.js application</text>
+  <text x="932" y="112" font-size="13" fill="#5b6570">apps/web, port 3000</text>
+  <rect x="932" y="130" width="208" height="62" rx="8" fill="#fbeee9" stroke="#efc9bc"/>
+  <text x="946" y="154" font-size="13.5" font-weight="600" fill="#161b20">Permission guard</text>
+  <text x="946" y="174" font-size="12.5" fill="#5b6570">every query names a permission</text>
+  <g font-size="13.5" fill="#161b20">
+    <text x="932" y="224" font-weight="600">Staff console</text>
+    <text x="932" y="242" font-size="12.5" fill="#5b6570">five city roles, each its own home</text>
+    <text x="932" y="274" font-weight="600">Operator portal</text>
+    <text x="932" y="292" font-size="12.5" fill="#5b6570">one operator, its own records only</text>
+    <text x="932" y="324" font-weight="600">Public open-data page</text>
+    <text x="932" y="342" font-size="12.5" fill="#5b6570">no sign-in; counts of 10 or more,</text>
+    <text x="932" y="358" font-size="12.5" fill="#5b6570">coarse hexagons, finished months</text>
+  </g>
+
+  <!-- Arrows -->
+  <g stroke="#5b6570" stroke-width="1.6" fill="none">
+    <line x1="352" y1="210" x2="286" y2="210" marker-end="url(#a)"/>
+    <line x1="572" y1="210" x2="634" y2="210" marker-end="url(#a)" marker-start="url(#a)"/>
+    <line x1="912" y1="210" x2="846" y2="210" marker-end="url(#a)" marker-start="url(#a)"/>
+  </g>
+  <g font-size="12" fill="#6b747d" text-anchor="middle">
+    <text x="316" y="200">polls</text>
+    <text x="603" y="200">writes</text>
+    <text x="877" y="200">reads</text>
+  </g>
+
+  <!-- Lower row -->
+  <g filter="url(#s)">
+    <rect x="40" y="440" width="532" height="180" rx="12" fill="#ffffff" stroke="#dfe2de"/>
+    <rect x="640" y="440" width="520" height="180" rx="12" fill="#ffffff" stroke="#dfe2de"/>
+  </g>
+  <text x="60" y="472" font-size="16" font-weight="600" fill="#161b20">Shared logic, tested without a database</text>
+  <text x="60" y="492" font-size="13" fill="#5b6570">packages/core, used by the worker and the web application alike</text>
+  <g font-size="13.5" fill="#161b20">
+    <text x="60" y="526">Feed validation</text><text x="240" y="526">Fee calculation</text><text x="410" y="526">Access rules</text>
+    <text x="60" y="554">Health scoring</text><text x="240" y="554">Rule engine</text><text x="410" y="554">Privacy rules</text>
+    <text x="60" y="582">Zones and geography</text><text x="240" y="582">Cases and deadlines</text><text x="410" y="582">Reporting periods</text>
+  </g>
+
+  <text x="660" y="472" font-size="16" font-weight="600" fill="#161b20">What stays inside in this demonstration</text>
+  <g font-size="13.5" fill="#161b20">
+    <text x="660" y="508" font-weight="600">No sign-in.</text><text x="742" y="508" fill="#5b6570">A seat picker stands in for single sign-on (OIDC),</text>
+    <text x="660" y="526" fill="#5b6570">which has one function to connect to and is not connected.</text>
+    <text x="660" y="558" font-weight="600">No email.</text><text x="728" y="558" fill="#5b6570">Notices, alerts and the monthly report are written to</text>
+    <text x="660" y="576" fill="#5b6570">an outbox table that staff can read in the console.</text>
+    <text x="660" y="604" fill="#5b6570">Basemap tiles are served from the application itself (Protomaps).</text>
+  </g>
+  <g stroke="#9aa3ab" stroke-width="1.3" stroke-dasharray="4 4" fill="none">
+    <line x1="462" y1="434" x2="462" y2="396" marker-end="url(#a)"/>
+  </g>
+</svg>

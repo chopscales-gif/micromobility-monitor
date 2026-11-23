@@ -1,0 +1,17 @@
+{
+  "name": "@mm/worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/worker.ts",
+    "start": "tsx src/worker.ts",
+    "seed": "tsx src/seed.ts"
+  },
+  "dependencies": {
+    "@mm/core": "*",
+    "@mm/db": "*",
+    "@mm/ingest": "*",
+    "@mm/simulator": "*",
+    "pg-boss": "12.38.2"
+  }
+}

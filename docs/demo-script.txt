@@ -1,0 +1,99 @@
+MICROMOBILITY MONITOR
+Two-minute demo script
+
+Everything shown is simulated. The three operators are fictional and the software
+is not used by any city. Say so at the start.
+
+Before you begin: the seat picker is at the top right of every screen. Start on the
+Compliance analyst seat, light theme, at the home screen.
+
+
+0:00  Open
+
+Say: "A city permits scooter and bike companies, and then has to take their word
+for how many vehicles are out, where they are, and what they owe. This reads the
+operators' own data feeds and checks all three. It is a demonstration on simulated
+data, with three made-up operators."
+
+
+0:10  Home, as the compliance analyst
+
+Show: the home screen. Point at the first panel, Disputes to decide.
+
+Say: "Each person opens on their own work, in the order it is best done. The
+analyst has a dispute with the city's own deadline running, replies to read, and
+findings nobody has told the operator about yet."
+
+
+0:25  A case and its evidence
+
+Click: case C-00043 at the top.
+
+Show: the operator's dispute on the right and the escalation ladder, then scroll
+down to the findings and their evidence.
+
+Say: "A case is one operator, one rule, one week. Every finding carries its
+evidence: which vehicles, where they stood, for how long. The operator disputed
+it, and the city has five working days to uphold or withdraw."
+
+
+0:45  The live map
+
+Click: Live map in the menu. Switch to Density, then press Replay the last 24 hours
+for a few seconds.
+
+Say: "This is every vehicle on the street right now, from the feeds. The dashed
+line is the permitted area, the shaded areas are the zones the city has drawn."
+
+
+1:00  The money
+
+Switch seat to Priya Raman, Finance. Click Invoices, then MM-2026-10-PRO.
+
+Say: "The invoice is calculated from the trip records themselves, then set beside
+what the operator reported. Where the two disagree by more than the tolerance, it
+says so before the invoice goes out. Finance issues invoices; finance does not set
+the fees. No seat can do everything."
+
+
+1:20  The operator's side
+
+Switch seat to Kestrel Mobility, Operator portal. Click Compliance.
+
+Say: "The operator signs in to the same system and sees only its own records: how
+its fleet measures against each rule this minute, and what the next notice would
+cost. It cannot see another operator, or a case the city has not sent."
+
+
+1:40  The public side
+
+Click: Public open-data page, at the bottom of the menu. Scroll to the map.
+
+Say: "And this is what the public gets: counts only, for finished months. Any
+count under ten rides is withheld and places are rounded, so no single ride can be
+picked out."
+
+
+1:55  Close
+
+Say: "Every read and every change in the console is in an audit log, and the
+controls are written up plainly, including what is not built. This is a
+demonstration: sign-in, email and real operator feeds are the work of connecting
+it to a real program."
+
+
+If you have another minute
+
+  Data health (Program manager seat): one operator's feed is failing, and findings
+  made while it was failing are held, not counted.
+
+  Zones (Program manager seat): draw a new no-parking zone on the map and adopt it.
+
+  Audit log (Program manager or IT administrator seat): the clicks you just made.
+
+After the demo, reset what you changed:
+
+  npm run db:seed -- --violations
+
+
+Built by ChopMedia as a portfolio demonstration.

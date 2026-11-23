@@ -1,0 +1,65 @@
+# One-command local demo: `docker compose up --build`, then open http://localhost:3000
+services:
+  db:
+    # Multi-arch build of the official PostGIS image (the official one has no arm64 variant for Apple Silicon).
+    image: imresamu/postgis:17-3.5
+    # A small write-ahead log: seeding writes a lot, and a demo should not take a gigabyte of disk to do it.
+    command: ["postgres", "-c", "max_wal_size=128MB", "-c", "min_wal_size=32MB"]
+    environment:
+      POSTGRES_USER: mm
+      POSTGRES_PASSWORD: mm
+      POSTGRES_DB: mm
+    ports:
+      - "54329:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mm -d mm"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  simulator:
+    build: .
+    command: ["npm", "run", "start", "-w", "@mm/simulator-server"]
+    environment:
+      SIMULATOR_PUBLIC_URL: http://simulator:4010
+    ports:
+      - "4010:4010"
+
+  # Creates the tables, then fills an empty database with a month of simulated history (two to three minutes, first start only).
+  setup:
+    build: .
+    command: ["sh", "-c", "npm run db:migrate && npm run db:seed"]
+    environment: &app
+      DATABASE_URL: postgres://mm:mm@db:5432/mm
+      SIMULATOR_URL: http://simulator:4010
+      # A throwaway key for the local demo, where the only "secrets" are the fictional operators' tokens. Set a real one anywhere else.
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:-00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff}
+      SEED_IF_EMPTY: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+      simulator:
+        condition: service_started
+
+  worker:
+    build: .
+    command: ["npm", "run", "start", "-w", "@mm/worker"]
+    environment: *app
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+
+  web:
+    build: .
+    command: ["npm", "run", "start", "-w", "@mm/web"]
+    environment: *app
+    ports:
+      - "3000:3000"
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+
+volumes:
+  dbdata:

@@ -1,0 +1,36 @@
+{
+  "name": "@mm/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "predev": "node scripts/copy-map-worker.mjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/copy-map-worker.mjs",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@deck.gl/core": "9.4.1",
+    "@deck.gl/geo-layers": "9.4.1",
+    "@deck.gl/layers": "9.4.1",
+    "@deck.gl/mapbox": "9.4.1",
+    "@mm/core": "*",
+    "@mm/db": "*",
+    "@mm/ingest": "*",
+    "@protomaps/basemaps": "^5",
+    "@react-pdf/renderer": "4.9.0",
+    "h3-js": "4.5.0",
+    "maplibre-gl": "6.19.0",
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "pmtiles": "4.5.0",
+    "tailwindcss": "4.3.3"
+  }
+}

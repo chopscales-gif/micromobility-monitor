@@ -1,0 +1,26 @@
+{
+  "name": "micromobility-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "demo": "docker compose up --build",
+    "db:up": "docker compose up -d db",
+    "db:migrate": "node --env-file-if-exists=.env --import tsx packages/db/src/migrate.ts",
+    "db:seed": "node --env-file-if-exists=.env --import tsx apps/worker/src/seed.ts",
+    "dev:web": "npm run dev -w @mm/web",
+    "dev:simulator": "npm run dev -w @mm/simulator-server",
+    "dev:worker": "npm run dev -w @mm/worker",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p packages/core && tsc --noEmit -p packages/simulator && tsc --noEmit -p packages/db && tsc --noEmit -p packages/ingest && tsc --noEmit -p apps/worker && tsc --noEmit -p apps/simulator && tsc --noEmit -p apps/web"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.1.0"
+  }
+}

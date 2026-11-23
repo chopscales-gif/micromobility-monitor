@@ -1,0 +1,119 @@
+MICROMOBILITY MONITOR
+Deploy guide
+
+This is a demonstration build. Every operator, vehicle, trip and invoice in it is
+simulated, the operators are fictional, and the software is not used by, or affiliated
+with, any city. This guide says what has been run and what has not.
+
+
+1. What runs
+
+Four processes and one database:
+
+  Database     PostgreSQL 17 with PostGIS 3.5.
+  Simulator    Serves the three fictional operators' GBFS and MDS feeds. Port 4010.
+  Worker       Polls the feeds, checks them, judges the rules, builds invoices and
+               reports, deletes ride paths past retention. Long-running.
+  Web          The Next.js application: staff console, operator portal and public
+               open-data page. Port 3000.
+  Setup        Runs once: creates the tables and seeds a month of history.
+
+The worker must run all the time. A host that only runs code when a web request
+arrives cannot carry it.
+
+
+2. Run it on your own machine (tested)
+
+This is how the demonstration was built and tested. Needs Node 22 and Docker.
+
+  cp .env.example .env
+  Set TOKEN_ENCRYPTION_KEY in .env to the output of: openssl rand -hex 32
+  npm install
+  npm run db:up            PostGIS in Docker, on port 54329
+  npm run db:migrate
+  npm run dev:simulator    terminal 1
+  npm run db:seed          one month of history, about 400 MB, 2 to 3 minutes
+  npm run dev:worker       terminal 2
+  npm run dev:web          terminal 3, then open http://localhost:3000
+
+To reset the demo after trying the forms, without rebuilding the history:
+
+  npm run db:seed -- --violations
+
+That rebuilds the cases, findings, alerts and outbox in a few seconds. It does not
+undo a new fee schedule, a new or retired zone, a changed rule or an issued invoice.
+For those, drop the database volume and seed again.
+
+
+3. Run it with one command (written, not yet run)
+
+  npm run demo
+
+This is Docker Compose: database, simulator, setup, worker and web, with the web on
+http://localhost:3000. The Dockerfile and docker-compose.yml are in the repository,
+but the image was never built on the development machine, which did not have the
+disk space. Treat the first run as a test. Allow about 3 GB of disk for the image
+and the database, and 2 to 3 minutes for the first start while the history is seeded.
+
+The compose file carries a placeholder token key and a local database password.
+They are for a local demonstration only.
+
+
+4. Settings
+
+  DATABASE_URL            Required. The PostgreSQL connection string.
+  TOKEN_ENCRYPTION_KEY    Required. 64 hexadecimal characters. Encrypts the
+                          operators' feed tokens. Keep it out of the repository.
+                          Changing it makes the stored tokens unreadable.
+  SIMULATOR_URL           Where the worker and the seed find the simulator.
+  SIMULATOR_PUBLIC_URL    The simulator's own address, as it should appear in the
+                          feed links it publishes.
+  DATABASE_SSL            Unset locally. Set to require, or verify-full, for any
+                          database reached over a network.
+  ROUTE_RETENTION_DAYS    Days a ride's path is kept. Default 90.
+  SEED_IF_EMPTY           Set to 1 to make the seed do nothing on a database that
+                          already has history. Used by the setup step.
+  SEED_MONTHS, SIM_SEED,  Optional. Months of history to seed, the seed for the
+  HEALTH_HISTORY_DAYS     simulated city, and days of feed health history to seed.
+  PORT                    The port each process listens on.
+
+
+5. Putting it on the internet (not done)
+
+No hosted copy exists. Nothing here has been deployed. What a hosted demonstration
+needs, and the work still open:
+
+  A host that keeps long-running processes. The simplest fit is one small virtual
+  machine with Docker, running the compose file behind a proxy that provides HTTPS
+  (Caddy or similar). A container platform with a managed PostgreSQL also fits if
+  it offers PostGIS and always-on workers. A serverless host can carry the web
+  application alone, but the worker and the simulator would need a home elsewhere.
+
+  Running the simulator inside the worker, to save a process on a hosted copy, was
+  planned and is not built. Today the simulator is its own process.
+
+  The forms are live. Anyone who opens a public copy can adopt a fee schedule,
+  retire a zone, change a rule or close a case, and the next visitor sees the
+  result. Before sharing a public link, either reset the data on a schedule or make
+  the public copy read-only. Neither is built.
+
+  Replace the placeholder key and the database password. Set DATABASE_SSL. Serve
+  the site over HTTPS only: the application sends Strict-Transport-Security and
+  marks its cookie Secure in production, but does not terminate HTTPS itself.
+
+  Size: the seeded month is about 400 MB, and the database grows as the worker
+  keeps polling. Ride paths are deleted after ROUTE_RETENTION_DAYS; trip records
+  and feed checks are not trimmed in this build.
+
+
+6. For a real city program (not done)
+
+A production deployment is a separate piece of work. At the least: connect single
+sign-on (docs/data-privacy-and-security.txt, section 6), register the real
+operators' feed addresses and tokens in place of the simulator, connect a mail
+service in place of the outbox, set the retention periods the city's records
+schedule requires, ship the audit log to write-once storage, and have the system
+independently reviewed.
+
+
+Built by ChopMedia as a portfolio demonstration.

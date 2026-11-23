@@ -1,0 +1,170 @@
+MICROMOBILITY MONITOR
+Data Privacy and Security
+
+This is a demonstration build. Every operator, vehicle, trip and invoice in it is
+simulated, the operators are fictional, and the software is not used by, or affiliated
+with, any city. This document describes the controls as they exist in the code today.
+Where a control depends on how the system is hosted, or is not built, it says so.
+
+
+1. What data the system holds
+
+From each operator's feeds: vehicle positions and status, and trip records (vehicle,
+start and end time, distance, duration, and the path of the ride).
+
+The system holds no rider names, accounts, phone numbers or payment details. The feeds
+do not carry them and the system has nowhere to put them. The privacy risk is in the
+trips themselves: a ride from one address to another, at a known time, can identify a
+person without a name attached. The controls below are built around that.
+
+The only secrets the application stores are the operators' feed tokens.
+
+
+2. Raw trip data is never public
+
+The public page (/open-data) publishes counts for finished months only. It never
+publishes a single ride, a vehicle identifier, or a path. Three rules apply to every
+figure on the page and in its CSV and GeoJSON downloads:
+
+  Minimum count of 10. A count of fewer than 10 rides is withheld. Where a published
+  total would let a withheld count be worked out by subtraction, the next smallest
+  count is withheld as well, until it cannot be.
+
+  Coarse places. Locations are hexagons about 900 metres across (H3 resolution 8),
+  each named by a centre point rounded to 3 decimal places, about 100 metres.
+
+  Summary values only. Distance and duration are published as one middle value for
+  the month, rounded.
+
+A month still in progress, and a month with too few rides, are not published at all.
+
+Scope of this rule: it governs everything that leaves the staff console for the public.
+Inside the console, signed-in staff work with exact figures, because an invoice or a
+finding cannot be audited from rounded ones. That access is limited by role and
+recorded (sections 4 and 5).
+
+Proof: packages/core/src/privacy.ts holds the rules. The tests build an awkward month
+(a small operator, a quiet day, a quiet hour, a quiet corner of town) and check that
+no count under 10 is published or recoverable by subtraction, and that no download
+contains a ride or vehicle identifier.
+
+
+3. Retention
+
+The path of a ride is kept for ROUTE_RETENTION_DAYS (90 by default), then deleted by
+the daily job. What remains is what the invoices and reports use: the start and end
+hexagons, distance, duration and times. A setting that is not a whole number of days
+falls back to 90 instead of deleting on a guess.
+
+Raw location points from the feeds are kept for 48 hours, until the trip they belong
+to has been filed, then deleted.
+
+No path of a ride is served by any screen or download in the console.
+
+Not built: retention periods for trip records without their paths, for vehicle status
+history, or for the audit log. These are kept indefinitely in this build. A city's
+records schedule would set them.
+
+
+4. Access control
+
+Six roles: program manager, compliance analyst, finance, IT administrator, read-only,
+and operator portal. Twenty-one permissions. No role holds all of them. The person who
+sets a fee does not issue the invoice; the IT administrator runs the system and sees
+no cases and no invoices.
+
+Every query the console runs names the permission it needs and passes through one
+function (apps/web/src/server/guard.ts). A request without the permission is refused.
+The Seats page in the console shows the whole table.
+
+The operator portal is confined to one operator. An operator sees its own vehicles,
+feed health, compliance standing, notices and issued invoices, and nothing of any
+other operator. It does not see a case until the city has recorded a notice on it, a
+finding the city is still checking, the city's internal notes, or a draft invoice.
+
+Proof: a test signs in as one operator against a database holding two, and asks for
+the other's cases, findings, invoices and trip ledger by number, and for every list
+the console serves. A second test reads the source and fails if a query is added that
+does not pass through the guard.
+
+
+5. Audit log
+
+Every read, export and change made through the console is written to the audit log:
+who, their role, when, what, which operator's data, and whether it was allowed.
+Refused attempts are recorded too, as is an operator's request for a record it may
+not see. The program manager and the IT administrator can read the log.
+
+Stated plainly:
+
+  Screens that refresh themselves (the live map, the home screen) record repeat reads
+  by the same person within ten minutes as one entry with a count, not one entry each.
+
+  Five things are not logged, by decision: a person's own alerts, the outbox copies
+  of mail addressed to that person, the list of months that have a report, the seat
+  picker, and the public page, which has no sign-in and serves only figures already
+  cleared for publication.
+
+  The background worker's own activity (reading feeds, deleting expired paths) goes
+  to the worker's log, not the audit log.
+
+  The log is an ordinary database table. The application only adds to it, but nothing
+  in this build stops a database administrator from altering it. A production
+  deployment should ship it to write-once storage.
+
+
+6. Sign-in
+
+This demonstration has no sign-in. A seat picker, labelled as demo mode, stands in
+for it so a reviewer can try every role.
+
+The application is built to take single sign-on through OpenID Connect (OIDC): one
+function (apps/web/src/server/session.ts) decides who is looking, and everything
+after it, permissions, operator scoping and the audit log, sees only the result.
+Connecting a city's identity provider replaces that one function. That work is not
+done, and has not been tested against a real identity provider.
+
+
+7. Encryption
+
+In transit:
+
+  Operator feeds are read over whatever address the operator is registered with. In
+  production these must be HTTPS addresses. The simulator in this demonstration
+  serves plain HTTP on the local machine.
+
+  The console sets Strict-Transport-Security, so a browser that has reached it over
+  HTTPS will not go back to HTTP, and marks the session cookie Secure in production.
+  HTTPS itself is terminated by the host or a proxy in front of the application.
+
+  The database connection is encrypted when DATABASE_SSL is set to "require", or to
+  "verify-full" to also check the server's certificate. It is unset in the local
+  demonstration, where the database is on the same machine.
+
+At rest:
+
+  Operators' feed tokens are encrypted in the application with AES-256-GCM before
+  they are stored, under a key (TOKEN_ENCRYPTION_KEY) that is supplied by the
+  environment and is not in the repository or the database.
+
+  Everything else in the database relies on the host's disk or volume encryption.
+  The application does not encrypt trip records itself. Managed PostgreSQL services
+  provide encryption at rest; it must be confirmed for the service chosen.
+
+
+8. Other measures, and known gaps
+
+  In place: responses cannot be framed by another site, browsers are told not to
+  guess content types, and the session cookie cannot be read by scripts.
+
+  No secrets are in the repository. The Docker Compose file contains a placeholder
+  token key and a local database password, for the demonstration only. Both must be
+  replaced before any real deployment.
+
+  Not built: a content security policy, rate limiting, session expiry and multi-factor
+  sign-in (the last two belong to the identity provider once OIDC is connected).
+
+  Not done: an independent security review or penetration test.
+
+
+Built by ChopMedia as a portfolio demonstration.

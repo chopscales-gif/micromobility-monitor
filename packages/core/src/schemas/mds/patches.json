@@ -1,0 +1,18 @@
+[
+  {
+    "id": "pin-micromobility-mode",
+    "reason": "The schema accepts an event, trip or vehicle if it matches exactly one of four modes (car share, delivery robots, micromobility, passenger services). A valid scooter record can match more than one, which fails it. This city regulates micromobility only, so the micromobility rules are applied directly."
+  },
+  {
+    "id": "fix-trip-id-condition",
+    "reason": "The rule 'trip events must carry a trip id' is written with a list under `contains`, which is not valid JSON Schema and never takes effect. Rewritten so it does what the MDS text says (modes/micromobility.md, Trip ID Requirements)."
+  },
+  {
+    "id": "vehicle-types-2.1",
+    "reason": "MDS 2.1 adds the vehicle types scooter, van and freight (data-types.md)."
+  },
+  {
+    "id": "parking-categories-2.1",
+    "reason": "MDS 2.1 adds the parking categories space and dock (data-types.md, Trips)."
+  }
+]
