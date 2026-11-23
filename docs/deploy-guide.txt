@@ -19,7 +19,8 @@ Four processes and one database:
   Setup        Runs once: creates the tables and seeds a month of history.
 
 The worker must run all the time. A host that only runs code when a web request
-arrives cannot carry it.
+arrives cannot carry it. The hosted copy (section 5) therefore runs without one: it
+shows a recorded history with the clock stopped, and nothing new arrives.
 
 
 2. Run it on your own machine (tested)
@@ -83,8 +84,25 @@ They are for a local demonstration only.
                           nothing can clear the audit log.
   SIMULATOR_PUBLIC_URL    The simulator's own address, as it should appear in the
                           feed links it publishes.
+  DEMO_CLOCK              For a copy with no worker. An instant such as
+                          2026-11-10T21:10:00Z. The seed ends its history there,
+                          and the web application treats that instant as the
+                          present on every screen and in every record it writes.
+                          Seed and web application must be given the same value.
+                          Never set it where the worker runs. Unset by default.
+  CRON_SECRET             For a copy with no worker. The secret the host's
+                          scheduler sends to /api/cron/reset, which does the
+                          nightly reset in the worker's place. Any other caller
+                          gets "not found".
   DATABASE_SSL            Unset locally. Set to require, or verify-full, for any
                           database reached over a network.
+  DATABASE_URL_UNPOOLED   Optional. Where a host gives both a pooled and a direct
+                          address, the web application uses this direct one. The
+                          reset holds a lock for one session, which a pooler
+                          that shares sessions between requests would break.
+  DATABASE_POOL_MAX,      Optional, web application only. Connections kept per
+  DATABASE_IDLE_SECONDS   server process (default 5), and seconds before an idle
+                          one is closed (default never).
   ROUTE_RETENTION_DAYS    Days a ride's path is kept. Default 90.
   SEED_IF_EMPTY           Set to 1 to make the seed do nothing on a database that
                           already has history. Used by the setup step.
@@ -93,16 +111,69 @@ They are for a local demonstration only.
   PORT                    The port each process listens on.
 
 
-5. Putting it on the internet (not done)
+5. The hosted copy (done, with limits)
 
-No hosted copy exists. Nothing here has been deployed. What a hosted demonstration
-needs, and the work still open:
+A hosted copy exists at https://micromobility-monitor.vercel.app. It was deployed
+and checked on 23 November 2026. It costs nothing to run.
+
+  What it is. The web application alone, on Vercel (Hobby plan), with a Neon
+  PostgreSQL 18 database with PostGIS 3.6 (free plan, added through Vercel's
+  marketplace as micromobility-monitor-db). No worker and no simulator run.
+
+  What it does not do. It does not poll feeds, judge rules as time passes, build
+  new invoices or send the monthly report email. The history was seeded once and
+  ends on Tuesday 10 November 2026 at 2:10 in the afternoon, Salt Lake City time.
+  The clock is stopped there (DEMO_CLOCK): "now", "the last 24 hours", deadlines
+  and the open month are all counted from that moment, and anything a visitor
+  records is stamped with it. The strip at the top of every page says so. The
+  page called "Live map" shows the fleet as it stood at that moment.
+
+  What still works. Every seat and screen, the map and its 24-hour replay, the
+  case, zone, rule and fee forms, issuing an invoice, the PDF and CSV downloads,
+  the audit log and the public open-data page.
+
+  Reset. DEMO_RESET=1 is set. "Reset it now" was pressed on the hosted copy after
+  changing things and put them back in 6 to 8 seconds. In place of the worker's
+  nightly job, Vercel's scheduler calls /api/cron/reset once a day at about
+  10:00 UTC (apps/web/vercel.json). The route was called by hand with its secret
+  and worked; the first scheduled run had not happened when this was written.
+
+  Ride paths are not stored. The free database allows about 500 MB. After seeding,
+  the path of every ride was removed from the hosted database, which brought it
+  to 238 MB. No screen draws a ride's path; start and end areas, distance and
+  duration are kept. The open-data page still describes the 90-day retention the
+  full system applies. With no worker the database does not grow, apart from the
+  audit log between resets.
+
+  How it was put there, so it can be repeated:
+
+    1. Create the Vercel project and set its root directory to apps/web. The
+       install command in apps/web/vercel.json installs the whole workspace.
+    2. Add the database: vercel integration add neon --name micromobility-monitor-db
+    3. Seed a local database with DEMO_CLOCK and TOKEN_ENCRYPTION_KEY set
+       (npm run db:migrate, npm run db:seed), run
+       update trips set route = null, then vacuum full.
+    4. Copy it across with pg_dump --no-owner --no-acl piped into psql.
+    5. Set on the Vercel project, for production: DEMO_CLOCK and
+       TOKEN_ENCRYPTION_KEY (the same two values used to seed), DEMO_RESET=1,
+       DATABASE_SSL=require, DATABASE_POOL_MAX=3, DATABASE_IDLE_SECONDS=20 and
+       CRON_SECRET (openssl rand -hex 24).
+    6. vercel deploy --prod
+
+  Not checked: the maps in an ordinary browser on a phone (they were checked in
+  headless Chrome with software rendering, at 1440 and 390 wide), drawing a new
+  zone on the hosted map, and behaviour with many visitors at once. The free
+  database allows about 100 connections and each server process keeps at most 3.
+
+
+5a. A copy that keeps running (not done)
+
+The full system, with live polling, has not been hosted. What it needs:
 
   A host that keeps long-running processes. The simplest fit is one small virtual
   machine with Docker, running the compose file behind a proxy that provides HTTPS
   (Caddy or similar). A container platform with a managed PostgreSQL also fits if
-  it offers PostGIS and always-on workers. A serverless host can carry the web
-  application alone, but the worker would need a home elsewhere.
+  it offers PostGIS and always-on workers.
 
   Two processes, not three. With SIMULATOR_INPROCESS=1 the worker answers the
   operators' feeds itself and the simulator process can be left out. Tested on the
@@ -112,11 +183,11 @@ needs, and the work still open:
   The forms are live. Anyone who opens a public copy can adopt a fee schedule,
   retire a zone, change a rule or close a case, and the next visitor sees the
   result. Set DEMO_RESET=1 on the worker and the web application before sharing a
-  public link. What the reset does: removes zones that were added and restores
+  public link (the hosted copy has it). What the reset does: removes zones that were added and restores
   ones that were retired, re-adopts the rules, removes fee schedules added since
   the seed, returns the invoices to how they were seeded, rebuilds the cases,
   findings, alerts and outbox, and empties the audit log. It takes about four
-  seconds on the seeded month. Its limits:
+  seconds on the seeded month locally, and 6 to 8 on the hosted copy. Its limits:
 
     Between resets, visitors still see one another's changes.
 

@@ -1,3 +1,4 @@
+import { clock as present } from "@mm/core/clock";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -279,7 +280,7 @@ export default async function CasePage({ params, searchParams }: Props) {
   if (c instanceof Refused) return <Refusal person={person} permission={c.permission} />;
   if (c === null) notFound();
 
-  const now = Date.now();
+  const now = present();
   const s = CASE_STATUSES[c.status];
   const isOperator = person.role === "operator";
   const mayAct = can(person.role, "violations.change");

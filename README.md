@@ -19,7 +19,7 @@ A city permits two or three companies to put a few thousand scooters and bikes o
 
 ## Screenshots
 
-No hosted copy exists yet. These are from the demonstration running locally, on simulated data.
+A hosted copy is at **https://micromobility-monitor.vercel.app**. It is the web application on a recorded month of simulated data, with the clock stopped at 10 November 2026: no background worker runs there, so no feeds are polled and nothing new arrives. Every seat, screen, form and download works, and what a visitor changes is put back each night or on request. The screenshots below are from the demonstration running locally.
 
 ### What the public sees
 
@@ -137,7 +137,9 @@ npm run dev:web             # terminal 3: http://localhost:3000
 
 Two settings are for a copy that strangers share. `DEMO_RESET=1` puts everything a visitor can change back as it was seeded, every night and on request from the strip at the top of the console. `SIMULATOR_INPROCESS=1` makes the worker answer the operators' feeds itself, so the simulator does not need a process of its own.
 
-`npm run demo` (Docker Compose: database, simulator, seed, worker and web in one command) is written but has not been run end to end yet. The [deploy guide](docs/deploy-guide.txt) covers it, the settings, and what a hosted copy would still need.
+The hosted copy runs with no worker. `DEMO_CLOCK` stops the clock at the instant the database was seeded for, so every screen counts from there, and a daily scheduled request to `/api/cron/reset` stands in for the worker's nightly reset. Ride paths were removed from that database to fit a free plan; no screen draws them.
+
+`npm run demo` (Docker Compose: database, simulator, seed, worker and web in one command) is written but has not been run end to end yet. The [deploy guide](docs/deploy-guide.txt) covers it, the settings, how the hosted copy was set up and what it does not do.
 
 ```bash
 npm test            # feed validation, health scoring, fee calculation, rule engine, cases and deadlines, confidence checks, alerts, zone files, access rules, report parsing, exports, privacy rules, reporting periods, and a check that every query in the console passes through the permission guard

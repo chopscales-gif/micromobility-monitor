@@ -5,7 +5,7 @@ import { LADDER_WINDOW_MONTHS } from "@mm/core/cases";
 import { healthScore, type Health } from "@mm/core/health";
 import type { RuleKind } from "@mm/core/rules";
 import { authorize } from "./guard";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 import { counts, MEASURES } from "./health";
 
 export type FeedNow = {
@@ -30,8 +30,8 @@ export async function feedsNow(actor: Actor): Promise<FeedNow[]> {
   const seesCases = can(actor.role, "violations.view") && actor.role !== "operator";
   const [operators, totals, recent, held] = await Promise.all([
     sql`select id, slug, name from operators where ${scope ? sql`id = ${scope}` : sql`true`} order by name`,
-    sql`select operator_id, ${MEASURES}, max(polled_at) as last_polled from feed_polls where polled_at > now() - interval '1 day' and ${mine} group by 1`,
-    sql`select operator_id, polled_at, outcome from feed_polls where period_hour is null and polled_at > now() - interval '3 hours' and ${mine} order by operator_id, polled_at desc`,
+    sql`select operator_id, ${MEASURES}, max(polled_at) as last_polled from feed_polls where polled_at > ${sqlNow()} - interval '1 day' and ${mine} group by 1`,
+    sql`select operator_id, polled_at, outcome from feed_polls where period_hour is null and polled_at > ${sqlNow()} - interval '3 hours' and ${mine} order by operator_id, polled_at desc`,
     seesCases ? sql`select v.operator_id, count(*)::int as n from violations v join cases c on c.id = v.case_id where v.standing = 'held' and c.status in ('held', 'open') group by 1` : Promise.resolve([] as Record<string, any>[]),
   ]);
   return operators.map((o) => {
@@ -63,7 +63,7 @@ export type Record12 = {
 export async function records(actor: Actor): Promise<Record12[]> {
   const scope = await authorize(actor, "violations.view", { action: "read", resource: "case_queue", detail: { view: "record" }, repeating: true });
   const rows = await sql`select operator_id, rule_kind, count(*)::int as notices, max(step)::int as step from cases
-    where notified_at is not null and outcome is distinct from 'withdrawn' and week_start >= current_date - ${`${LADDER_WINDOW_MONTHS} months`}::interval
+    where notified_at is not null and outcome is distinct from 'withdrawn' and week_start >= ${sqlNow()}::date - ${`${LADDER_WINDOW_MONTHS} months`}::interval
       and ${scope ? sql`operator_id = ${scope}` : sql`true`} group by 1, 2 order by 4 desc, 3 desc`;
   const out = new Map<string, Record12>();
   for (const r of rows) {
@@ -81,7 +81,7 @@ export type AuditPulse = { day: number; refusedDay: number; changesDay: number; 
 export async function auditPulse(actor: Actor): Promise<AuditPulse> {
   await authorize(actor, "audit.view", { action: "read", resource: "audit_log", detail: { view: "home" }, repeating: true });
   const [[n], refusals] = await Promise.all([
-    sql`select count(*)::int as day, count(*) filter (where not allowed)::int as refused, count(*) filter (where action = 'change' and allowed)::int as changes from audit_log where at > now() - interval '1 day'`,
+    sql`select count(*)::int as day, count(*) filter (where not allowed)::int as refused, count(*) filter (where action = 'change' and allowed)::int as changes from audit_log where at > ${sqlNow()} - interval '1 day'`,
     sql`select at, user_name, role, action, resource, detail from audit_log where not allowed order by id desc limit 4`,
   ]);
   return { day: n!.day, refusedDay: n!.refused, changesDay: n!.changes, refusals: refusals.map((r) => ({ at: r.at.getTime(), userName: r.user_name, role: r.role, action: r.action, resource: r.resource, detail: r.detail })) };

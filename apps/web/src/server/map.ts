@@ -2,7 +2,7 @@
 
 import type { Actor } from "@mm/core/access";
 import { authorize } from "./guard";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 
 const scoped = (column: string, operatorId: string | null) => (operatorId ? sql`${sql(column)} = ${operatorId}` : sql`true`);
 
@@ -50,7 +50,7 @@ export async function tripHexes(actor: Actor, options: { end: "origins" | "desti
   const rows = await sql`
     select ${sql(column)} as h3, count(*)::int as n
     from trips t join operators o on o.id = t.operator_id
-    where t.end_time > now() - make_interval(days => ${days}) and ${scoped("t.operator_id", scope)}
+    where t.end_time > ${sqlNow()} - make_interval(days => ${days}) and ${scoped("t.operator_id", scope)}
       and ${options.operators ? sql`o.slug = any(${options.operators})` : sql`true`} and ${options.type ? sql`t.vehicle_type = ${options.type}` : sql`true`}
     group by 1`;
   return { days, cells: rows.map((r) => [r.h3 as string, r.n as number] as const) };

@@ -12,6 +12,8 @@ const config: NextConfig = {
   // Keep the development badge off the theme toggle in the sidebar.
   devIndicators: { position: "bottom-right" },
   serverExternalPackages: ["postgres", "@react-pdf/renderer"],
+  // A stopped demonstration clock has to read the same in the browser as on the server.
+  env: { DEMO_CLOCK: process.env.DEMO_CLOCK ?? "" },
   async headers() {
     return [
       { source: "/basemap/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=604800, immutable" }] },

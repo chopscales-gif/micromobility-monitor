@@ -1,5 +1,6 @@
 "use server";
 
+import { clock } from "@mm/core/clock";
 import { redirect } from "next/navigation";
 import { localDate } from "@mm/core/city";
 import { adoptSchedule, withdrawSchedule } from "@/server/fees";
@@ -34,7 +35,7 @@ export async function adopt(formData: FormData) {
 
   let problem = "";
   if (!/^\d{4}-\d{2}-\d{2}$/.test(effectiveFrom) || Number.isNaN(Date.parse(effectiveFrom))) problem = "Choose the date the schedule takes effect.";
-  else if (effectiveFrom <= localDate(Date.now())) problem = "The effective date must be in the future, so invoices already issued are not changed.";
+  else if (effectiveFrom <= localDate(clock())) problem = "The effective date must be in the future, so invoices already issued are not changed.";
   else if (perDeviceAnnualCents === null) problem = "The device fee must be a dollar amount up to $1,000.";
   else if (perRideCents === null) problem = "The ride fee must be a dollar amount up to $10.";
   else if (minBillableTripSeconds === null) problem = "The shortest billable ride must be a whole number of seconds, up to 600.";

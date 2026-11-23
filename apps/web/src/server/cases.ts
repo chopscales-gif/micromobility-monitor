@@ -8,7 +8,7 @@ import { raiseAlerts } from "@mm/ingest/alerts";
 import { actOnCase, ruleOnFinding } from "@mm/ingest/cases";
 import { reference } from "@/lib/violations";
 import { authorize } from "./guard";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 
 export const PAGE_SIZE = 40;
 
@@ -68,12 +68,12 @@ export type QueueFilter = { status: CaseStatus | "all"; operator: string | null;
 export async function caseQueue(actor: Actor, filter: QueueFilter) {
   await authorize(actor, "violations.view", { action: "read", resource: "case_queue" });
   const visible = visibleTo(actor);
-  const flag = filter.flag === "reply" ? sql`c.replied_at is not null` : filter.flag === "overdue" ? sql`c.replied_at is null and c.due_at < now()` : sql`true`;
+  const flag = filter.flag === "reply" ? sql`c.replied_at is not null` : filter.flag === "overdue" ? sql`c.replied_at is null and c.due_at < ${sqlNow()}` : sql`true`;
   const [groups, operators, rows] = await Promise.all([
     sql`select c.status, o.slug, c.rule_kind, count(*)::int as n,
         count(*) filter (where c.status = 'notified' and c.replied_at is not null)::int as replies,
-        count(*) filter (where c.status = 'notified' and c.replied_at is null and c.due_at < now())::int as overdue,
-        count(*) filter (where c.status = 'resolved' and c.status_changed_at > now() - interval '30 days')::int as recent
+        count(*) filter (where c.status = 'notified' and c.replied_at is null and c.due_at < ${sqlNow()})::int as overdue,
+        count(*) filter (where c.status = 'resolved' and c.status_changed_at > ${sqlNow()} - interval '30 days')::int as recent
       from cases c join operators o on o.id = c.operator_id where ${visible} group by 1, 2, 3`,
     sql`select slug, name from operators o where ${actor.role === "operator" ? sql`o.id = ${actor.operatorId}` : sql`true`} order by name`,
     sql`${CASES}

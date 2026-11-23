@@ -19,8 +19,8 @@ export function sslMode(value = process.env.DATABASE_SSL): "require" | "verify-f
   throw new Error('DATABASE_SSL must be "require" or "verify-full"');
 }
 
-export function connect(url = process.env.DATABASE_URL, options: { max?: number } = {}): { sql: Sql } {
+export function connect(url = process.env.DATABASE_URL, options: { max?: number; idleSeconds?: number } = {}): { sql: Sql } {
   if (!url) throw new Error("DATABASE_URL is not set");
   const ssl = sslMode();
-  return { sql: postgres(url, { max: options.max ?? 5, onnotice: () => {}, ...(ssl ? { ssl } : {}) }) };
+  return { sql: postgres(url, { max: options.max ?? 5, onnotice: () => {}, ...(options.idleSeconds ? { idle_timeout: options.idleSeconds } : {}), ...(ssl ? { ssl } : {}) }) };
 }

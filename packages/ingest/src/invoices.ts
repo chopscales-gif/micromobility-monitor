@@ -1,6 +1,7 @@
 // Builds a month's invoice for one operator from the trips the city received,
 // and sets it beside what the operator reported.
 
+import { clock } from "@mm/core/clock";
 import { calculateInvoice, monthRange, type FeeSchedule, type Permit } from "@mm/core";
 import type { Sql } from "@mm/db";
 
@@ -21,7 +22,7 @@ export async function scheduleFor(sql: Sql, year: number, month: number): Promis
   };
 }
 
-export async function generateInvoice(sql: Sql, operator: { id: string; slug: string }, year: number, month: number, now = Date.now()): Promise<string> {
+export async function generateInvoice(sql: Sql, operator: { id: string; slug: string }, year: number, month: number, now = clock()): Promise<string> {
   const period = `${year}-${pad(month)}`;
   // An invoice that finance has signed off is a sent document: it is never recalculated.
   const [issued] = await sql`select id from invoices where operator_id = ${operator.id} and year = ${year} and month = ${month} and status = 'issued'`;

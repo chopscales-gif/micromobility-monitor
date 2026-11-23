@@ -3,7 +3,7 @@
 
 import type { Actor } from "@mm/core/access";
 import { authorize } from "./guard";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 
 export type AlertRow = { id: string; kind: string; at: number; title: string; body: string; href: string; urgent: boolean; read: boolean; emailedAt: number | null };
 
@@ -22,12 +22,12 @@ export async function myAlerts(actor: Actor): Promise<AlertRow[]> {
 /** Marks one of this person's alerts read and says where it leads. */
 export async function openAlert(actor: Actor, id: string): Promise<string | null> {
   if (!/^[0-9a-f-]{36}$/i.test(id) && !/^\d+$/.test(id)) return null;
-  const [row] = await sql`update alerts set read_at = coalesce(read_at, now()) where id = ${id} and user_id = ${actor.userId} returning href`;
+  const [row] = await sql`update alerts set read_at = coalesce(read_at, ${sqlNow()}) where id = ${id} and user_id = ${actor.userId} returning href`;
   return row ? (row.href as string) : null;
 }
 
 export async function markAllRead(actor: Actor): Promise<void> {
-  await sql`update alerts set read_at = now() where user_id = ${actor.userId} and read_at is null`;
+  await sql`update alerts set read_at = ${sqlNow()} where user_id = ${actor.userId} and read_at is null`;
 }
 
 export type Mail = { id: string; at: number; toName: string; toEmail: string; kind: "alert" | "digest" | "report"; subject: string; body: string; attachment: { name: string; href: string } | null };

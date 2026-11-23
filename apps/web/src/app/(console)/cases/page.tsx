@@ -1,3 +1,4 @@
+import { clock } from "@mm/core/clock";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CASE_STATUSES as STATUS_ORDER, type CaseStatus } from "@mm/core/cases";
@@ -33,7 +34,7 @@ export default async function CasesPage({ searchParams }: Props) {
   const queue = await attempt(() => caseQueue(person, { status, operator: search.operator ?? null, rule, flag, page }));
   if (queue instanceof Refused) return <Refusal person={person} permission={queue.permission} />;
   const operator = queue.operators.find((o) => o.slug === search.operator)?.slug ?? null;
-  const now = Date.now();
+  const now = clock();
 
   const href = (change: Partial<{ status: string; operator: string | null; rule: string | null; flag: Flag | null; page: number }>) => {
     const next = { status, operator, rule, flag: "status" in change ? null : flag, page: 1, ...change };

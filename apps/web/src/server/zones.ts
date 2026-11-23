@@ -4,7 +4,7 @@ import type { Actor } from "@mm/core/access";
 import type { Polygon } from "@mm/core/geo";
 import type { ZoneType } from "@mm/core/zones";
 import { authorize } from "./guard";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 
 export type Zone = {
   id: string;
@@ -42,8 +42,8 @@ export async function createZone(actor: Actor, zone: NewZone): Promise<string | 
   if (!check!.valid) return /self-intersection/i.test(check!.reason) ? "The outline crosses itself. Draw the corners in order around the edge, without crossing a line already drawn." : `The shape is not a valid polygon (${String(check!.reason).toLowerCase()}).`;
   if (check!.area < MIN_AREA_M2) return "The shape is too small to be a zone.";
   const slug = `${zone.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "zone"}-${crypto.randomUUID().slice(0, 8)}`;
-  await sql`insert into zones (slug, name, type, geom, speed_limit_kph, source, effective_from, created_by)
-    values (${slug}, ${zone.name}, ${zone.type}, st_multi(st_setsrid(st_geomfromgeojson(${shape}), 4326)), ${zone.speedLimitKph}, ${zone.source}, now(), ${actor.name})`;
+  await sql`insert into zones (slug, name, type, geom, speed_limit_kph, source, effective_from, created_at, created_by)
+    values (${slug}, ${zone.name}, ${zone.type}, st_multi(st_setsrid(st_geomfromgeojson(${shape}), 4326)), ${zone.speedLimitKph}, ${zone.source}, ${sqlNow()}, ${sqlNow()}, ${actor.name})`;
   return null;
 }
 
@@ -56,6 +56,6 @@ export async function retireZone(actor: Actor, id: string): Promise<string | nul
     const [others] = await sql`select count(*)::int as n from zones where type = 'service_area' and retired_at is null and id <> ${id}`;
     if (others!.n === 0) return "This is the only service area. Adopt its replacement first, or every parked vehicle would count as outside the permitted area.";
   }
-  await sql`update zones set retired_at = now(), retired_by = ${actor.name}, active = false where id = ${id}`;
+  await sql`update zones set retired_at = ${sqlNow()}, retired_by = ${actor.name}, active = false where id = ${id}`;
   return null;
 }

@@ -8,7 +8,7 @@
 
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { localDate, routeRetentionDays, startOfLocalDay } from "@mm/core";
+import { clock as present, localDate, routeRetentionDays, startOfLocalDay } from "@mm/core";
 import { connect, encryptToken, type Sql } from "@mm/db";
 import { ADOPTED, adoptRules, catchUp, createContext, fetchReport, generateInvoice, issueOpeningInvoices, loadOperators, people, pollRealtime, pollRoster, purgeTelemetry, rebuildCases, TELEMETRY_KEEP_MS, type Operator } from "@mm/ingest";
 import { OPERATORS, providerId, simFetcher, ZONES } from "@mm/simulator";
@@ -132,7 +132,8 @@ async function main() {
   const flag = process.argv.indexOf("--backfill");
   if (flag > 0) return backfill(process.argv[flag + 1]!, Number(process.argv[flag + 2]));
 
-  const now = Date.now();
+  // With DEMO_CLOCK set, the history ends at that instant, for a copy that will show it with the clock stopped there.
+  const now = present();
   const { sql } = connect(undefined, { max: 2 });
   if (process.argv.includes("--violations")) {
     console.log(`Rule engine: ${await rebuildCases(sql, now, { raw: process.argv.includes("--raw") })} findings filed.`);

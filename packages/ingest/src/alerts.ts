@@ -2,6 +2,7 @@
 // the email each alert would have produced to the outbox. Nothing is ever sent:
 // the outbox is the demonstration's stand-in for a mail server.
 
+import { clock } from "@mm/core/clock";
 import {
   digest, ladderStep, localDate, localHour, monthLabel, planAlerts, RULES, ZONE_LABELS,
   type Alert, type AlertPerson, type CaseFact, type ChangeFact, type HoldFact, type InvoiceFact, type OutageFact, type RuleKind, type ZoneType,
@@ -97,7 +98,7 @@ async function gather(sql: Sql, now: number) {
  * Raises whatever alerts the present state calls for. Safe to repeat: an alert is keyed by its subject, so the same
  * thing is never raised twice. Urgent alerts to staff are written to the outbox at once; the rest wait for the daily summary.
  */
-export async function raiseAlerts(sql: Sql, now = Date.now()): Promise<number> {
+export async function raiseAlerts(sql: Sql, now = clock()): Promise<number> {
   const facts = await gather(sql, now);
   const planned: Alert[] = planAlerts(facts);
   if (planned.length === 0) return 0;
@@ -120,7 +121,7 @@ export async function raiseAlerts(sql: Sql, now = Date.now()): Promise<number> {
 }
 
 /** Writes the daily summary for everyone who has something waiting, once a day, after the summary hour. */
-export async function sendDigests(sql: Sql, now = Date.now()): Promise<number> {
+export async function sendDigests(sql: Sql, now = clock()): Promise<number> {
   if (localHour(now) < DIGEST_HOUR) return 0;
   const today = localDate(now);
   const waiting = await sql`select a.id, a.user_id, a.at, a.title, a.body, a.href, u.name, u.email from alerts a join users u on u.id = a.user_id

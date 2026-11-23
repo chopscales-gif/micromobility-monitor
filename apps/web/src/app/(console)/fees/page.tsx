@@ -1,3 +1,4 @@
+import { clock } from "@mm/core/clock";
 import type { Metadata } from "next";
 import { can } from "@mm/core/access";
 import { localDate } from "@mm/core/city";
@@ -39,8 +40,8 @@ export default async function FeesPage({ searchParams }: Props) {
 
   const mayChange = can(person.role, "fees.change");
   const { current, upcoming } = fees;
-  const today = localDate(Date.now());
-  const tomorrow = localDate(Date.now() + 86_400_000);
+  const today = localDate(clock());
+  const tomorrow = localDate(clock() + 86_400_000);
   const byOperator = new Map<string, typeof fees.permits>();
   for (const p of fees.permits) byOperator.set(p.operator, [...(byOperator.get(p.operator) ?? []), p]);
   const start = current ?? fees.history[0];

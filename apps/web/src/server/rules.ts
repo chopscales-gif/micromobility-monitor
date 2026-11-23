@@ -3,7 +3,7 @@
 import type { Actor } from "@mm/core/access";
 import { RULE_KINDS, RULES, type RuleKind } from "@mm/core/rules";
 import { authorize } from "./guard";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 
 export type RuleRow = { kind: RuleKind; enabled: boolean; params: Record<string, number>; effectiveFrom: number; updatedBy: string; updatedAt: number; adopted: boolean; open: number; notified: number; disputed: number; held: number };
 
@@ -36,6 +36,6 @@ export async function ruleList(actor: Actor): Promise<RuleRow[]> {
 /** New settings take effect now: days and weeks already over are not judged again. */
 export async function changeRule(actor: Actor, kind: RuleKind, params: Record<string, number>, enabled: boolean) {
   await authorize(actor, "rules.change", { action: "change", resource: "rules", detail: { kind, enabled, ...params } });
-  await sql`insert into rules (kind, enabled, params, effective_from, updated_by, updated_at) values (${kind}, ${enabled}, ${sql.json(params)}, now(), ${actor.name}, now())
+  await sql`insert into rules (kind, enabled, params, effective_from, updated_by, updated_at) values (${kind}, ${enabled}, ${sql.json(params)}, ${sqlNow()}, ${actor.name}, ${sqlNow()})
     on conflict (kind) do update set enabled = excluded.enabled, params = excluded.params, effective_from = excluded.effective_from, updated_by = excluded.updated_by, updated_at = excluded.updated_at`;
 }

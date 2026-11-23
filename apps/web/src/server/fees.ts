@@ -1,11 +1,12 @@
 // Fee schedule, permits and invoices.
 
+import { clock } from "@mm/core/clock";
 import type { Actor } from "@mm/core/access";
 import { localDate } from "@mm/core/city";
 import { raiseAlerts } from "@mm/ingest/alerts";
 import { generateInvoice } from "@mm/ingest/invoices";
 import { authorize } from "./guard";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 
 const scoped = (column: string, operatorId: string | null) => (operatorId ? sql`${sql(column)} = ${operatorId}` : sql`true`);
 /** An operator is shown an invoice once finance has issued it. Until then it is the city's working paper. */
@@ -47,7 +48,7 @@ export async function feeSchedules(actor: Actor) {
     sql`select p.id, o.slug, o.name, p.devices, p.start_date::text as start_date, p.end_date::text as end_date, p.note
       from permits p join operators o on o.id = p.operator_id where ${scoped("p.operator_id", scope)} order by o.name, p.start_date`,
   ]);
-  const today = localDate(Date.now());
+  const today = localDate(clock());
   const list = schedules.map(schedule);
   return {
     current: list.find((s) => s.effectiveFrom <= today) ?? null,
@@ -62,14 +63,14 @@ export type ScheduleChange = Omit<Schedule, "id" | "createdBy" | "createdAt">;
 export async function adoptSchedule(actor: Actor, change: ScheduleChange) {
   await authorize(actor, "fees.change", { action: "change", resource: "fee_schedule", detail: change });
   await sql`insert into fee_schedules (effective_from, per_device_annual_cents, per_ride_cents, min_billable_trip_seconds, exempt_equity_zone_trips,
-      discrepancy_tolerance_pct, discrepancy_tolerance_trips, note, created_by)
+      discrepancy_tolerance_pct, discrepancy_tolerance_trips, note, created_by, created_at)
     values (${change.effectiveFrom}, ${change.perDeviceAnnualCents}, ${change.perRideCents}, ${change.minBillableTripSeconds}, ${change.exemptEquityZoneTrips},
-      ${change.discrepancyTolerancePct}, ${change.discrepancyToleranceTrips}, ${change.note}, ${actor.name})`;
+      ${change.discrepancyTolerancePct}, ${change.discrepancyToleranceTrips}, ${change.note}, ${actor.name}, ${sqlNow()})`;
 }
 
 /** A schedule that has not taken effect yet can be withdrawn; one that has been billed under cannot. */
 export async function withdrawSchedule(actor: Actor, id: string): Promise<boolean> {
-  const [row] = await sql`select id, effective_from::text as effective_from from fee_schedules where id = ${id} and effective_from > ${localDate(Date.now())}`;
+  const [row] = await sql`select id, effective_from::text as effective_from from fee_schedules where id = ${id} and effective_from > ${localDate(clock())}`;
   if (!row) return false;
   await authorize(actor, "fees.change", { action: "change", resource: "fee_schedule", detail: { change: "withdrawn", effectiveFrom: row.effective_from } });
   await sql`delete from fee_schedules where id = ${id}`;
@@ -189,7 +190,7 @@ export async function issueInvoice(actor: Actor, number: string, note: string): 
   const text = note.trim();
   if (row.flagged && !text) return "The operator's report does not agree with the city's count. Say why the invoice is being issued anyway: the note is kept with it.";
   if (row.reported_trips === null && !text) return "The operator has not filed its report. Say why the invoice is being issued without it.";
-  const updated = await sql`update invoices set status = 'issued', issued_at = now(), issued_by = ${actor.name}, issue_note = ${text || null} where id = ${row.id} and status = 'draft' returning id`;
+  const updated = await sql`update invoices set status = 'issued', issued_at = ${sqlNow()}, issued_by = ${actor.name}, issue_note = ${text || null} where id = ${row.id} and status = 'draft' returning id`;
   if (updated.length === 0) return "Someone else issued this invoice a moment ago.";
   await raiseAlerts(sql);
   return null;

@@ -1,3 +1,5 @@
+import { clock } from "@mm/core/clock";
+
 // Everything on screen is shown in the city's own time, whatever the viewer's clock says.
 
 const ZONE = "America/Denver";
@@ -52,7 +54,7 @@ export function span(minutes: number): string {
 }
 
 /** How long ago, coarsely: "3 hours ago", "12 days ago". */
-export function ago(ms: number, now = Date.now()): string {
+export function ago(ms: number, now = clock()): string {
   const minutes = Math.max(0, Math.round((now - ms) / 60_000));
   if (minutes < 60) return minutes <= 1 ? "just now" : `${minutes} minutes ago`;
   const hours = Math.round(minutes / 60);

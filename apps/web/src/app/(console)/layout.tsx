@@ -2,15 +2,20 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { can, ROLE_LABELS, type Permission } from "@mm/core/access";
 import { CITY_NAME } from "@mm/core/city";
+import { clock, clockStopped } from "@mm/core/clock";
 import { DemoReset } from "@/components/DemoReset";
 import { Nav } from "@/components/Nav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ViewAs } from "@/components/ViewAs";
 import { Wordmark } from "@/components/Wordmark";
+import { dateTime } from "@/lib/format";
 import { THEME_COOKIE, type Theme } from "@/lib/theme";
 import { unreadCount } from "@/server/alerts";
 import { demoResetEnabled } from "@/server/demo";
 import { currentPerson, listPeople } from "@/server/session";
+
+// Room for the demonstration's reset, which re-judges the whole recorded history.
+export const maxDuration = 60;
 
 type Section = { href: string; label: string; needs?: Permission; operatorLabel?: string; operatorOnly?: boolean };
 const SECTIONS: Section[] = [
@@ -48,7 +53,7 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
               <a href="https://chopmedia.vercel.app/#city-micromobility" className="mr-3 whitespace-nowrap font-semibold underline underline-offset-4">
                 ← All demos
               </a>{" "}
-              <strong className="font-semibold">Demonstration.</strong> <span className="text-dim">Simulated data from three fictional operators. Not used by, or affiliated with, any city.</span>
+              <strong className="font-semibold">Demonstration.</strong> <span className="text-dim">Simulated data from three fictional operators{clockStopped ? `, recorded and stopped at ${dateTime(clock())}` : ""}. Not used by, or affiliated with, any city.</span>
               {demoResetEnabled() && (
                 <>
                   {" "}

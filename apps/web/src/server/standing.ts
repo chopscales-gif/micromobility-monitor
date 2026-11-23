@@ -4,6 +4,7 @@
 // Built only from what has been put to the operator. A case the city has not recorded a notice
 // on is the city's working material and plays no part here, whoever is looking.
 
+import { clock } from "@mm/core/clock";
 import type { Actor } from "@mm/core/access";
 import { caseReference, ladderStep, LADDER_WINDOW_MONTHS, type CaseOutcome, type CaseStatus } from "@mm/core/cases";
 import { localDate } from "@mm/core/city";
@@ -50,7 +51,7 @@ export type FleetNow = {
 export type OperatorStanding = { operatorId: string; slug: string; name: string; rules: RuleStanding[]; now: FleetNow };
 
 /** Each operator's standing against the rules. An operator is given its own and no other. */
-export async function standing(actor: Actor, now = Date.now()): Promise<OperatorStanding[]> {
+export async function standing(actor: Actor, now = clock()): Promise<OperatorStanding[]> {
   const scope = await authorize(actor, "violations.view", { action: "read", resource: "standing" });
   const mine = (column: string) => (scope ? sql`${sql(column)} = ${scope}` : sql`true`);
   const today = localDate(now);

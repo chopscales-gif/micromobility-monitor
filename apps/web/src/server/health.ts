@@ -3,7 +3,7 @@
 import type { Actor } from "@mm/core/access";
 import { healthScore, SLOW_MS, type Health, type HealthCounts } from "@mm/core/health";
 import { authorize } from "./guard";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 
 export type FeedRow = {
   feed: string;
@@ -69,13 +69,13 @@ export async function dataHealth(actor: Actor, days: number): Promise<{ days: nu
   const window = [1, 7, 14].includes(days) ? days : 7;
   const scope = await authorize(actor, "health.view", { action: "read", resource: "data_health", detail: { days: window } });
   const mine = scope ? sql`operator_id = ${scope}` : sql`true`;
-  const since = sql`now() - make_interval(days => ${window})`;
+  const since = sql`${sqlNow()} - make_interval(days => ${window})`;
 
   const [operators, totals, daily, feeds, errors, failures] = await Promise.all([
     sql`select id, slug, name from operators where ${scope ? sql`id = ${scope}` : sql`true`} order by name`,
     sql`select operator_id, ${MEASURES} from feed_polls where polled_at > ${since} and ${mine} group by 1`,
     sql`select operator_id, to_char(polled_at at time zone 'America/Denver', 'YYYY-MM-DD') as date, ${MEASURES}
-      from feed_polls where polled_at > now() - interval '14 days' and ${mine} group by 1, 2 order by 2`,
+      from feed_polls where polled_at > ${sqlNow()} - interval '14 days' and ${mine} group by 1, 2 order by 2`,
     sql`select operator_id, feed, ${MEASURES},
         (percentile_cont(0.5) within group (order by latency_ms) filter (where outcome = 'ok'))::int as median_ms,
         max(polled_at) as last_polled, (array_agg(outcome order by polled_at desc))[1] as last_outcome, max(checked_against) as checked_against

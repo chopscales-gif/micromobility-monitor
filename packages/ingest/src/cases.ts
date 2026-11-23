@@ -2,6 +2,7 @@
 // the seeded history both go through here, so a case can only ever be in a state
 // the rules in @mm/core allow.
 
+import { clock } from "@mm/core/clock";
 import { ACTIONS, DECISION_WORKING_DAYS, deadline, ladderStep, LADDER_WINDOW_MONTHS, RESPONSE_WORKING_DAYS, restingStatus, type CaseAction, type CaseStatus, type LadderStep } from "@mm/core";
 import type { Sql } from "@mm/db";
 
@@ -19,7 +20,7 @@ export async function nextStep(sql: Sql, c: { operatorId: string; ruleKind: stri
 }
 
 /** Carries out one action on a case. Returns a sentence when it cannot be done. */
-export async function actOnCase(sql: Sql, number: number, action: CaseAction, actor: CaseActor, note: string, at = Date.now()): Promise<string | null> {
+export async function actOnCase(sql: Sql, number: number, action: CaseAction, actor: CaseActor, note: string, at = clock()): Promise<string | null> {
   const rule = ACTIONS[action];
   const text = note.trim();
   if (rule.needsNote && !text) return rule.by === "operator" ? "Say something before sending: the city reads what you write here." : "Write a note first. It is the record of why this was done.";
@@ -56,7 +57,7 @@ export async function actOnCase(sql: Sql, number: number, action: CaseAction, ac
  * Staff's ruling on one finding: release a held finding so that it counts, or set a finding aside so that it does not.
  * Once staff have ruled, the rule engine leaves the finding's standing alone.
  */
-export async function ruleOnFinding(sql: Sql, number: number, to: "counted" | "set_aside", actor: { name: string }, note: string, at = Date.now()): Promise<string | null> {
+export async function ruleOnFinding(sql: Sql, number: number, to: "counted" | "set_aside", actor: { name: string }, note: string, at = clock()): Promise<string | null> {
   const text = note.trim();
   if (!text) return to === "counted" ? "Say what was checked before releasing a held finding." : "Say why this finding is being set aside.";
   const [v] = await sql`select v.id, v.standing, v.case_id, c.status from violations v join cases c on c.id = v.case_id where v.number = ${number}`;

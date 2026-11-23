@@ -1,6 +1,7 @@
 // The monthly report: what the fleets did, how the operators kept to the rules, and what they owe.
 // One function gathers it for the screen and for the PDF, so the two cannot disagree.
 
+import { clock } from "@mm/core/clock";
 import { can, type Actor } from "@mm/core/access";
 import { CITY_TIME_ZONE, monthLabel, monthRange } from "@mm/core/city";
 import { complianceRate, daysIn, isClosed, lastClosedMonth, parsePeriod, periodOf, utilization, weeksIn } from "@mm/core/reporting";
@@ -15,7 +16,7 @@ const scoped = (column: string, operatorId: string | null) => (operatorId ? sql`
 export type ReportMonth = { period: string; year: number; month: number; label: string; closed: boolean };
 
 /** The months there are rides for, newest first. Asked without a permission: it says only which months exist. */
-export async function reportMonths(now = Date.now()): Promise<ReportMonth[]> {
+export async function reportMonths(now = clock()): Promise<ReportMonth[]> {
   const rows = await sql`select distinct billing_month from trips order by 1 desc`;
   return rows.flatMap((r) => {
     const parsed = parsePeriod(r.billing_month);
@@ -24,7 +25,7 @@ export async function reportMonths(now = Date.now()): Promise<ReportMonth[]> {
 }
 
 /** The month a report opens on when none is asked for: the newest finished one, or failing that the newest. */
-export function defaultMonth(months: ReportMonth[], now = Date.now()): ReportMonth | null {
+export function defaultMonth(months: ReportMonth[], now = clock()): ReportMonth | null {
   const last = lastClosedMonth(now);
   return months.find((m) => m.period === periodOf(last.year, last.month)) ?? months.find((m) => m.closed) ?? months[0] ?? null;
 }
@@ -66,7 +67,7 @@ const DURATION_LABELS = ["Under 5 min", "5 to 10 min", "10 to 15 min", "15 to 20
  * Everything in the report for one month. Returns null for a month there are no rides for.
  * The sections on compliance and fees are left out for a seat that may not see cases or invoices.
  */
-export async function monthlyReport(actor: Actor, period: string, action: "read" | "export" = "read", now = Date.now()): Promise<MonthlyReport | null> {
+export async function monthlyReport(actor: Actor, period: string, action: "read" | "export" = "read", now = clock()): Promise<MonthlyReport | null> {
   const scope = await authorize(actor, action === "export" ? "reports.export" : "reports.view", { action, resource: "monthly_report", detail: { month: period, ...(action === "export" ? { format: "pdf" } : {}) } });
   const parsed = parsePeriod(period);
   if (!parsed) return null;

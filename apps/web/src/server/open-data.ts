@@ -6,6 +6,7 @@
 //   places are hexagons about 900 metres across, named by a centre rounded to three decimal places;
 //   distances and durations are published as one middle value for the month, rounded.
 
+import { clock } from "@mm/core/clock";
 import { CITY_TIME_ZONE, monthLabel, monthRange } from "@mm/core/city";
 import { K_ANONYMITY_MIN, protectBreakdown, PUBLIC_H3_RESOLUTION, publishableShare, roundCoord, withheldTotal } from "@mm/core/privacy";
 import { daysIn, isClosed, parsePeriod, utilization } from "@mm/core/reporting";
@@ -41,7 +42,7 @@ export type OpenData = PublicMonth & {
 };
 
 /** Finished months with enough rides on record to publish, newest first. A month still running is never published. */
-export async function publicMonths(now = Date.now()): Promise<PublicMonth[]> {
+export async function publicMonths(now = clock()): Promise<PublicMonth[]> {
   const rows = await sql`select billing_month from trips group by 1 having count(*) >= ${K_ANONYMITY_MIN} order by 1 desc`;
   return rows.flatMap((r) => {
     const p = parsePeriod(r.billing_month);
@@ -75,7 +76,7 @@ const kept = new Map<string, { at: number; data: OpenData }>();
 const KEEP_MS = 10 * 60_000;
 
 /** The published figures for one finished month, or null if there is no such month. */
-export async function openData(period: string, now = Date.now()): Promise<OpenData | null> {
+export async function openData(period: string, now = clock()): Promise<OpenData | null> {
   const parsed = parsePeriod(period);
   if (!parsed || !isClosed(parsed.year, parsed.month, now)) return null;
   const cached = kept.get(period);

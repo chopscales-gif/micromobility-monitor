@@ -6,6 +6,7 @@
 // after visitors have tried the forms. None of this belongs in a deployment with real operators:
 // resetDemo() discards what staff have recorded, and nothing calls it unless DEMO_RESET is set.
 
+import { clock } from "@mm/core/clock";
 import { addDays, caseWeek, CITY_TIME_ZONE, localDate, RULE_KINDS, RULES, startOfLocalDay, type CaseAction, type RuleKind } from "@mm/core";
 import type { Sql } from "@mm/db";
 import { DIGEST_HOUR, raiseAlerts, sendDigests } from "./alerts";
@@ -239,7 +240,7 @@ const RESET_LOCK = 7_210_410;
  * Returns false, having done nothing, when another reset is already running. It is not one
  * transaction: for the few seconds it runs, a reader can see the case queue part built.
  */
-export async function resetDemo(sql: Sql, now = Date.now()): Promise<boolean> {
+export async function resetDemo(sql: Sql, now = clock()): Promise<boolean> {
   const held = await sql.reserve();
   try {
     const [lock] = await held`select pg_try_advisory_lock(${RESET_LOCK}) as taken`;

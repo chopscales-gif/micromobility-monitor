@@ -2,7 +2,7 @@
 // is reading; the attempt is written to the audit log whether or not it is allowed.
 
 import { can, maySeeOperator, operatorScope, type Actor, type Permission } from "@mm/core/access";
-import { sql } from "./db";
+import { sql, sqlNow } from "./db";
 
 export class Refused extends Error {
   constructor(public permission: Permission) {
@@ -36,15 +36,15 @@ export async function authorize(actor: Actor, permission: Permission, access: Ac
 
   if (allowed && access.repeating) {
     const updated = await sql`
-      update audit_log set detail = jsonb_set(coalesce(detail, '{}'), '{reads}', to_jsonb(coalesce((detail->>'reads')::int, 1) + 1)) || jsonb_build_object('last_read', now())
+      update audit_log set detail = jsonb_set(coalesce(detail, '{}'), '{reads}', to_jsonb(coalesce((detail->>'reads')::int, 1) + 1)) || jsonb_build_object('last_read', ${sqlNow()})
       where id = (select id from audit_log where user_id = ${actor.userId} and action = ${access.action} and resource = ${access.resource}
-        and allowed and at > now() - interval '10 minutes' and detail ? 'reads' order by id desc limit 1)
+        and allowed and at > ${sqlNow()} - interval '10 minutes' and detail ? 'reads' order by id desc limit 1)
       returning id`;
     if (updated.length > 0) return operatorScope(actor);
   }
   const detail = access.repeating ? { ...access.detail, reads: 1 } : (access.detail ?? null);
-  await sql`insert into audit_log (user_id, user_name, role, action, resource, operator_id, allowed, detail)
-    values (${actor.userId}, ${actor.name}, ${actor.role}, ${access.action}, ${access.resource}, ${operatorId ?? null}, ${allowed}, ${detail === null ? null : sql.json(detail as never)})`;
+  await sql`insert into audit_log (at, user_id, user_name, role, action, resource, operator_id, allowed, detail)
+    values (${sqlNow()}, ${actor.userId}, ${actor.name}, ${actor.role}, ${access.action}, ${access.resource}, ${operatorId ?? null}, ${allowed}, ${detail === null ? null : sql.json(detail as never)})`;
 
   if (!permitted) throw new Refused(permission);
   return operatorScope(actor);

@@ -1,3 +1,4 @@
+import { clock } from "@mm/core/clock";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { can, ROLE_LABELS, ROLE_PURPOSES } from "@mm/core/access";
@@ -503,7 +504,7 @@ async function OperatorHome({ person, now }: { person: Person; now: number }) {
 
 export default async function HomePage() {
   const person = await currentPerson();
-  const now = Date.now();
+  const now = clock();
   return (
     <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       {person.role === "analyst" ? (

@@ -1,8 +1,10 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { CITY_NAME } from "@mm/core/city";
+import { clock, clockStopped } from "@mm/core/clock";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/Wordmark";
+import { dateTime } from "@/lib/format";
 import { THEME_COOKIE, type Theme } from "@/lib/theme";
 
 // The public side: no seat, no sidebar, nothing that needs a sign-in.
@@ -15,7 +17,7 @@ export default async function PublicLayout({ children }: { children: React.React
           <a href="https://chopmedia.vercel.app/#city-micromobility" className="mr-3 whitespace-nowrap font-semibold underline underline-offset-4">
             ← All demos
           </a>{" "}
-          <strong className="font-semibold">Demonstration.</strong> <span className="text-dim">Simulated data from three fictional operators. Not published by, or affiliated with, any city.</span>
+          <strong className="font-semibold">Demonstration.</strong> <span className="text-dim">Simulated data from three fictional operators{clockStopped ? `, recorded and stopped at ${dateTime(clock())}` : ""}. Not published by, or affiliated with, any city.</span>
         </p>
       </div>
       <div className="frame-main flex min-h-0 flex-1 flex-col lg:overflow-y-auto">

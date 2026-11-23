@@ -11,3 +11,4 @@ export * from "./confidence";
 export * from "./alerts";
 export * from "./privacy";
 export * from "./reporting";
+export * from "./clock";

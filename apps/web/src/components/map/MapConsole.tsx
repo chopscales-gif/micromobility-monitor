@@ -1,5 +1,6 @@
 "use client";
 
+import { clock as present } from "@mm/core/clock";
 import { H3HexagonLayer } from "@deck.gl/geo-layers";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { MapboxOverlay } from "@deck.gl/mapbox";
@@ -293,7 +294,7 @@ export default function MapConsole({ viewerOperator }: { viewerOperator: string 
         const v = object as Placed;
         const state = stateOf(v.state);
         const operator = operators.find((o) => o.slug === v.operator)?.name ?? v.operator;
-        const at = timeline ? timeline.data.start + replaySecond * 1000 : Date.now();
+        const at = timeline ? timeline.data.start + replaySecond * 1000 : present();
         return {
           html: `<div style="font-weight:600">${esc(v.code)}</div>
             <div style="color:var(--color-dim)">${esc(operator)} · ${esc(TYPES[v.type] ?? v.type)}</div>
