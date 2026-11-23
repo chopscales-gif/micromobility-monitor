@@ -38,7 +38,7 @@ const BATTERY: { key: Battery; label: string; test: (b: number | null) => boolea
 
 // Lightness only, so a count never borrows the colour of a status or an operator: the lighter the hexagon, the more it holds.
 // One step per class the breaks below can make, running the full range from #3b444c to #e9eff5.
-const RAMP = ["#3b444c", "#676f76", "#929aa1", "#bec4cb", "#e9eff5"].map(hexToRgb);
+const RAMP = ["#fde3d3", "#f9bd9d", "#f09263", "#dc6430", "#a8400f"].map(hexToRgb);
 const REFRESH_MS = 30_000;
 const WINDOW_S = 24 * 3600;
 
@@ -330,7 +330,7 @@ export default function MapConsole({ viewerOperator }: { viewerOperator: string 
             radiusMaxPixels: 16,
             stroked: true,
             filled: true,
-            getFillColor: [12, 15, 18, 200],
+            getFillColor: [255, 255, 255, 230],
             getLineColor: [...hexToRgb(operatorHex("saltgrass")), 255],
             getLineWidth: 1.5,
             lineWidthUnits: "pixels",
@@ -344,13 +344,13 @@ export default function MapConsole({ viewerOperator }: { viewerOperator: string 
           data: shown,
           getPosition: (v) => [v.lng, v.lat],
           getRadius: (v) => (v.type === "bicycle" ? 13 : 10),
-          radiusMinPixels: 2.6,
+          radiusMinPixels: 3.4,
           radiusMaxPixels: 9,
           getFillColor: (v) => [...hexToRgb(colorBy === "status" ? stateOf(v.state).hex : operatorHex(v.operator)), 235] as [number, number, number, number],
           stroked: true,
-          // E-bikes carry a white ring so they can be told from scooters at a glance.
-          getLineColor: (v) => (v.type === "bicycle" ? [255, 255, 255, 255] : [12, 15, 18, 255]),
-          getLineWidth: (v) => (v.type === "bicycle" ? 1.5 : 0.75),
+          // E-bikes carry a dark ring so they can be told from scooters at a glance.
+          getLineColor: (v) => (v.type === "bicycle" ? [42, 31, 26, 235] : [255, 255, 255, 255]),
+          getLineWidth: (v) => (v.type === "bicycle" ? 1 : 0.75),
           lineWidthUnits: "pixels",
           pickable: true,
           updateTriggers: { getFillColor: [colorBy] },
@@ -364,7 +364,7 @@ export default function MapConsole({ viewerOperator }: { viewerOperator: string 
           data: hexCells,
           getHexagon: (c) => c[0],
           getFillColor: (c) => [...RAMP[rampIndex(c[1], cuts)]!, 190] as [number, number, number, number],
-          getLineColor: [12, 15, 18, 255],
+          getLineColor: [255, 255, 255, 255],
           getLineWidth: 1,
           lineWidthUnits: "pixels",
           stroked: true,
@@ -404,8 +404,8 @@ export default function MapConsole({ viewerOperator }: { viewerOperator: string 
   const legendLabels = cuts.length === 0 ? [] : [`1 to ${count(cuts[0]!)}`, ...cuts.slice(1).map((c, i) => `${count(cuts[i]! + 1)} to ${count(c)}`), `over ${count(cuts.at(-1)!)}`];
 
   return (
-    // The whole console is one instrument and is drawn dark in either theme, so the dots and zones keep one set of colours.
-    <div data-theme="dark" className="absolute inset-0 flex flex-col bg-ink text-text lg:flex-row">
+    // The whole console is one instrument and is drawn light in either theme, so the dots and zones keep one set of colours.
+    <div data-theme="light" className="absolute inset-0 flex flex-col bg-ink text-text lg:flex-row">
       {/* Control rail */}
       <aside
         className={`${panelOpen ? "flex" : "hidden"} absolute inset-x-0 bottom-0 top-12 z-20 flex-col overflow-y-auto border-line bg-panel lg:static lg:flex lg:w-[20.5rem] lg:shrink-0 lg:border-r`}

@@ -1,13 +1,13 @@
 // One colour and one plain-English label for each thing the screens talk about.
 
-// `color` is for the page and follows the theme. `hex` is for the maps, which are drawn dark in either theme.
+// `color` is for the page and follows the theme. `hex` is for the maps, which are drawn light in either theme.
 
 export const STATES = {
-  available: { label: "Available", hint: "Parked and rentable", color: "var(--color-available)", hex: "#45d489" },
-  on_trip: { label: "On a trip", hint: "Being ridden now", color: "var(--color-trip)", hex: "#38c6f4" },
-  non_operational: { label: "Not rentable", hint: "Low battery or out of order, still on the street", color: "var(--color-idle)", hex: "#f0b545" },
-  elsewhere: { label: "Outside permitted area", hint: "Ridden out of the service area", color: "var(--color-elsewhere)", hex: "#fb6188" },
-  removed: { label: "Off the street", hint: "Collected by the operator", color: "var(--color-removed)", hex: "#7a8794" },
+  available: { label: "Available", hint: "Parked and rentable", color: "var(--color-available)", hex: "#1b9a59" },
+  on_trip: { label: "On a trip", hint: "Being ridden now", color: "var(--color-trip)", hex: "#1485b8" },
+  non_operational: { label: "Not rentable", hint: "Low battery or out of order, still on the street", color: "var(--color-idle)", hex: "#d18a00" },
+  elsewhere: { label: "Outside permitted area", hint: "Ridden out of the service area", color: "var(--color-elsewhere)", hex: "#d42a4f" },
+  removed: { label: "Off the street", hint: "Collected by the operator", color: "var(--color-removed)", hex: "#7c8590" },
 } as const;
 
 export type StateKey = keyof typeof STATES;
@@ -16,9 +16,9 @@ export const stateOf = (state: string) => STATES[state as StateKey] ?? { label: 
 
 /** Each operator has a colour and a shape, so the two never rest on colour alone. */
 export const OPERATORS: Record<string, { hex: string; shape: "circle" | "diamond" | "square" }> = {
-  kestrel: { hex: "#8bafff", shape: "circle" },
-  pronghorn: { hex: "#ff8ac4", shape: "diamond" },
-  saltgrass: { hex: "#e3df9f", shape: "square" },
+  kestrel: { hex: "#3567cf", shape: "circle" },
+  pronghorn: { hex: "#c8388f", shape: "diamond" },
+  saltgrass: { hex: "#84801c", shape: "square" },
 };
 export const operatorColor = (slug: string) => (slug in OPERATORS ? `var(--color-${slug})` : "var(--color-dim)");
 export const operatorHex = (slug: string) => OPERATORS[slug]?.hex ?? "#9aa6b2";
@@ -52,12 +52,12 @@ export const FEED_LABELS: Record<string, string> = {
 export const feedLabel = (feed: string) => FEED_LABELS[feed] ?? feed;
 
 export const ZONE_STYLES: Record<string, { label: string; color: string; hex: string }> = {
-  service_area: { label: "Permitted service area", color: "var(--color-text)", hex: "#eaeef1" },
-  no_ride: { label: "No riding", color: "var(--color-poor)", hex: "#fb6188" },
-  slow_ride: { label: "Slow riding", color: "var(--color-fair)", hex: "#f0b545" },
-  no_parking: { label: "No parking", color: "var(--color-zone-no-parking)", hex: "#ff8a3d" },
-  required_parking: { label: "Required parking", color: "var(--color-trip)", hex: "#38c6f4" },
-  equity: { label: "Equity zone", color: "var(--color-zone-equity)", hex: "#6fe3c1" },
+  service_area: { label: "Permitted service area", color: "var(--color-text)", hex: "#2a1f1a" },
+  no_ride: { label: "No riding", color: "var(--color-poor)", hex: "#c8284a" },
+  slow_ride: { label: "Slow riding", color: "var(--color-fair)", hex: "#b57a00" },
+  no_parking: { label: "No parking", color: "var(--color-zone-no-parking)", hex: "#d0611c" },
+  required_parking: { label: "Required parking", color: "var(--color-trip)", hex: "#0b7fb0" },
+  equity: { label: "Equity zone", color: "var(--color-zone-equity)", hex: "#0f8f74" },
 };
 
 export const hexToRgb = (hex: string): [number, number, number] => [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];

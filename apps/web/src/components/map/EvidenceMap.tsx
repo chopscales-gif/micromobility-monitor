@@ -23,7 +23,7 @@ export default function EvidenceMap({ zones, points }: { zones: GeoJSON.FeatureC
         data: { type: "FeatureCollection", features: points.map((p) => ({ type: "Feature", geometry: { type: "Point", coordinates: [p.lng, p.lat] }, properties: p })) },
       });
       map.addLayer({ id: "points-halo", type: "circle", source: "points", paint: { "circle-radius": 11, "circle-color": ["get", "color"], "circle-opacity": 0.22 } });
-      map.addLayer({ id: "points", type: "circle", source: "points", paint: { "circle-radius": 5.5, "circle-color": ["get", "color"], "circle-stroke-color": "#0c0f12", "circle-stroke-width": 1.5 } });
+      map.addLayer({ id: "points", type: "circle", source: "points", paint: { "circle-radius": 5.5, "circle-color": ["get", "color"], "circle-stroke-color": "#ffffff", "circle-stroke-width": 1.5 } });
       if (points.length === 1) map.jumpTo({ center: [points[0]!.lng, points[0]!.lat], zoom: 15.6 });
       else if (points.length > 1) map.fitBounds(boundsOf(points.map((p) => [p.lng, p.lat])), { padding: 56, maxZoom: 16, duration: 0 });
 

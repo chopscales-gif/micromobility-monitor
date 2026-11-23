@@ -9,7 +9,7 @@ import type { PublicCell } from "@/server/open-data";
 import { boundsOf, createMap } from "./base";
 
 // The same pale-is-busy ramp as the console's own maps.
-const RAMP = ["#3b444c", "#676f76", "#929aa1", "#bec4cb", "#e9eff5"];
+const RAMP = ["#fde3d3", "#f9bd9d", "#f09263", "#dc6430", "#a8400f"];
 
 /** Class breaks that put about the same number of hexagons in each step of the ramp. */
 function breaks(cells: PublicCell[]): number[] {
@@ -47,7 +47,7 @@ export default function PublicHexMap({ starts, ends }: { starts: PublicCell[]; e
     const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: "evidence-popup" });
     map.on("load", () => {
       map.addSource("cells", { type: "geojson", data: latest.current.data });
-      map.addLayer({ id: "cells", type: "fill", source: "cells", paint: { "fill-color": ["get", "color"], "fill-opacity": 0.72, "fill-outline-color": "#0c0f12" } });
+      map.addLayer({ id: "cells", type: "fill", source: "cells", paint: { "fill-color": ["get", "color"], "fill-opacity": 0.72, "fill-outline-color": "#ffffff" } });
       const all = [...starts, ...ends].map((c) => [c.lng, c.lat] as [number, number]);
       if (all.length > 1) map.fitBounds(boundsOf(all), { padding: 36, duration: 0 });
       const show = (event: maplibregl.MapLayerMouseEvent) => {
@@ -102,7 +102,7 @@ export default function PublicHexMap({ starts, ends }: { starts: PublicCell[]; e
           ))}
         </ul>
       </div>
-      <div data-theme="dark" className="h-[26rem] overflow-hidden rounded-lg border border-line">
+      <div data-theme="light" className="h-[26rem] overflow-hidden rounded-lg border border-line">
         <div ref={holder} className="h-full w-full" role="img" aria-label={`Map of where rides ${end === "starts" ? "began" : "ended"}, in ${cells.length} hexagons. The same counts are in the download below.`} />
       </div>
     </div>

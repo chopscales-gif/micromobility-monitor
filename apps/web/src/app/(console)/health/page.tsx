@@ -25,7 +25,7 @@ function OperatorCard({ o, days }: { o: OperatorHealth; days: number }) {
   const grade = GRADES[o.health.grade];
   const flaws = o.counts.invalidRecords + o.counts.incompleteRecords;
   return (
-    <section className="panel px-5 pb-4 pt-4" aria-labelledby={`${o.slug}-name`}>
+    <section className="panel px-6 pb-5 pt-5" aria-labelledby={`${o.slug}-name`}>
       <h2 id={`${o.slug}-name`} className="heading">
         <Operator slug={o.slug} name={o.name} className="!font-semibold" />
         <Status color={grade.color} className="ml-auto">
@@ -90,7 +90,7 @@ function OperatorCard({ o, days }: { o: OperatorHealth; days: number }) {
 function OperatorDetail({ o }: { o: OperatorHealth }) {
   return (
     <section className="space-y-6" aria-labelledby={`${o.slug}-detail`}>
-      <div className="panel px-5 pb-2 pt-4">
+      <div className="panel px-6 pb-3 pt-5">
         <h2 id={`${o.slug}-detail`} className="heading">
           <Operator slug={o.slug} name={o.name} className="!font-semibold" />
           <small>feed by feed</small>
@@ -135,7 +135,7 @@ function OperatorDetail({ o }: { o: OperatorHealth }) {
       </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <div className="panel min-w-0 px-5 pb-2 pt-4">
+        <div className="panel min-w-0 px-6 pb-3 pt-5">
           <h3 className="heading">
             Schema errors, grouped by cause <small>{o.name}</small>
           </h3>
@@ -169,7 +169,7 @@ function OperatorDetail({ o }: { o: OperatorHealth }) {
             </ul>
           )}
         </div>
-        <div className="panel px-5 pb-2 pt-4">
+        <div className="panel px-6 pb-3 pt-5">
           <h3 className="heading">
             Outages <small>{o.name}</small>
           </h3>
@@ -201,7 +201,7 @@ export default async function HealthPage({ searchParams }: { searchParams: Promi
   if (result instanceof Refused) return <Refusal person={person} permission={result.permission} />;
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead
         title="Can the city trust what each operator is sending?"
         aside={<Choice current={String(result.days)} options={[1, 7, 14].map((d) => ({ key: String(d), href: `/health?days=${d}`, label: d === 1 ? "24 hours" : `${d} days` }))} />}

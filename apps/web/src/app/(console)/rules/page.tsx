@@ -28,7 +28,7 @@ export default async function RulesPage({ searchParams }: Props) {
   const saved = RULE_KINDS.includes(flash.saved as RuleKind) ? (flash.saved as RuleKind) : null;
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead title="The rules operators are held to">
         {isOperator ? (
           <>The rules in your permit, with the settings in force and how each one is measured from the data you send.</>
@@ -56,7 +56,7 @@ export default async function RulesPage({ searchParams }: Props) {
         </div>
       )}
 
-      <section className="panel scroll-mt-4 px-5 pb-4 pt-4" id="ladder">
+      <section className="panel scroll-mt-4 px-6 pb-5 pt-5" id="ladder">
         <h2 className="heading">
           What happens when a rule is broken
           <small>the escalation ladder</small>
@@ -87,7 +87,7 @@ export default async function RulesPage({ searchParams }: Props) {
       </section>
 
       {rules.map((r) => (
-        <section key={r.kind} id={r.kind} className="panel scroll-mt-4 px-5 pb-5 pt-4">
+        <section key={r.kind} id={r.kind} className="panel scroll-mt-4 px-6 pb-6 pt-5">
           <h2 className="heading">
             {RULES[r.kind].label}
             <Status color={r.enabled ? "var(--color-good)" : "var(--color-removed)"} className="aside !font-semibold">
@@ -155,7 +155,7 @@ export default async function RulesPage({ searchParams }: Props) {
         </section>
       ))}
 
-      <section className="panel px-5 pb-4 pt-4">
+      <section className="panel px-6 pb-5 pt-5">
         <h2 className="heading">What the rules do not cover</h2>
         <ul className="mt-3 max-w-3xl list-disc space-y-1.5 pl-5 leading-relaxed text-dim">
           <li>Required-parking zones are drawn on the map, but no rule checks them yet.</li>

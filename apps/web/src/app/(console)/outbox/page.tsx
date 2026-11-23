@@ -21,7 +21,7 @@ export default async function OutboxPage({ searchParams }: { searchParams: Promi
   if (mail instanceof Refused) return <Refusal person={person} permission={mail.permission} />;
 
   return (
-    <main className="mx-auto w-full max-w-[60rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[60rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead
         above="Demonstration outbox"
         title={everyone ? "Every email the system would have sent" : "Emails this seat would have received"}
@@ -31,7 +31,7 @@ export default async function OutboxPage({ searchParams }: { searchParams: Promi
         notices gathered into one digest a day, and the monthly report on the first of each month.
       </PageHead>
 
-      <section className="panel px-5 pb-2 pt-4">
+      <section className="panel px-6 pb-3 pt-5">
         <h2 className="heading">
           {mail.length === 0 ? "Messages" : `${count(mail.length)} message${mail.length === 1 ? "" : "s"}`}
           {mail.length > 0 && <small>newest first; none of them was sent</small>}

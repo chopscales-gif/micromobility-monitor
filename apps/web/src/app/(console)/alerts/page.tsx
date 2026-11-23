@@ -25,7 +25,7 @@ export default async function AlertsPage() {
   const alerts = await myAlerts(person);
   const unread = alerts.filter((a) => !a.read).length;
   return (
-    <main className="mx-auto w-full max-w-[60rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[60rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead
         above={`${ROLE_LABELS[person.role]} seat`}
         title={unread === 0 ? "Nothing unread" : `${count(unread)} unread alert${unread === 1 ? "" : "s"}`}
@@ -40,7 +40,7 @@ export default async function AlertsPage() {
         <strong>What this seat is alerted about.</strong> {SENT[person.role]}
       </PageHead>
 
-      <section className="panel px-5 pb-2 pt-4">
+      <section className="panel px-6 pb-3 pt-5">
         <h2 className="heading">
           Alerts
           <small>{alerts.length === 0 ? "none yet" : `${count(alerts.length)} in all, newest first`}</small>

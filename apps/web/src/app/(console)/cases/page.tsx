@@ -69,7 +69,7 @@ export default async function CasesPage({ searchParams }: Props) {
   const heading = isOperator ? (status === "all" ? "All notices" : `Notices: ${CASE_STATUSES[status].label.toLowerCase()}`) : status === "all" ? "All cases" : CASE_STATUSES[status].label;
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead title={isOperator ? `Notices to ${person.operatorName}` : "Cases"}>
         {isOperator ? (
           <>Each notice covers one rule in one week, with every finding behind it and the evidence for each. You can reply to a notice or dispute it; the city closes it.</>
@@ -81,11 +81,11 @@ export default async function CasesPage({ searchParams }: Props) {
         )}
       </PageHead>
 
-      <dl className={`panel grid overflow-hidden sm:grid-cols-2 ${isOperator ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
+      <dl className={`stats grid overflow-hidden sm:grid-cols-2 ${isOperator ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
         {tiles.map(([label, value, note, color, link]) => (
           <Link key={label} href={link} className="block border-line px-5 py-4 transition-colors hover:bg-raise max-lg:border-b max-lg:last:border-b-0 sm:max-lg:odd:border-r lg:border-r lg:last:border-r-0">
             <dt className="label">{label}</dt>
-            <dd className="figure mt-1 text-[1.75rem]" style={{ color: value > 0 ? color : "var(--color-faint)" }}>
+            <dd className="figure text-[2.375rem]" style={{ color: value > 0 ? color : "var(--color-faint)" }}>
               {count(value)}
             </dd>
             <dd className="mt-1 text-[0.8125rem] text-dim">{note}</dd>
@@ -93,7 +93,7 @@ export default async function CasesPage({ searchParams }: Props) {
         ))}
       </dl>
 
-      <section className="panel space-y-3 p-5" aria-label="Filters">
+      <section className="panel space-y-3 p-6" aria-label="Filters">
         <Filter
           label="Status"
           options={[
@@ -128,7 +128,7 @@ export default async function CasesPage({ searchParams }: Props) {
         {!flag && status !== "all" && <p className="border-t border-line pt-3 text-[0.8125rem] text-dim">{CASE_STATUSES[status].hint}.</p>}
       </section>
 
-      <section className="panel px-5 pb-2 pt-4">
+      <section className="panel px-6 pb-3 pt-5">
         <h2 className="heading">
           {heading}
           <small>

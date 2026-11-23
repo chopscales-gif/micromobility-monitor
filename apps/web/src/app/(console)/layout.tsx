@@ -6,6 +6,7 @@ import { DemoReset } from "@/components/DemoReset";
 import { Nav } from "@/components/Nav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ViewAs } from "@/components/ViewAs";
+import { Wordmark } from "@/components/Wordmark";
 import { THEME_COOKIE, type Theme } from "@/lib/theme";
 import { unreadCount } from "@/server/alerts";
 import { demoResetEnabled } from "@/server/demo";
@@ -29,7 +30,7 @@ const SECTIONS: Section[] = [
   { href: "/outbox", label: "Outbox" },
 ];
 
-// The staff console: the demonstration strip with the seat picker, the sidebar, and the page beside it.
+// The staff console: the demonstration strip with the seat picker, the header with its tabs, and the page under it.
 export default async function ConsoleLayout({ children }: { children: React.ReactNode }) {
   const [person, people, jar] = await Promise.all([currentPerson(), listPeople(), cookies()]);
   const theme: Theme = jar.get(THEME_COOKIE)?.value === "dark" ? "dark" : "light";
@@ -41,36 +42,43 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
   if (alerted) items.splice(1, 0, { href: "/alerts", label: "Alerts", unread } as (typeof items)[number]);
   return (
     <>
-        <div className="no-print text-[0.8125rem] text-white" style={{ background: "var(--strip)" }}>
-          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-4 py-1.5">
+        <div className="no-print text-[0.8125rem] text-text" style={{ background: "var(--strip)" }}>
+          <div className="mx-auto flex w-full max-w-[100rem] flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-4 py-2 lg:px-8">
             <p className="leading-snug">
-              <strong className="font-semibold">Demonstration.</strong> <span className="text-white/75">Simulated data from three fictional operators. Not used by, or affiliated with, any city.</span>
+              <strong className="font-semibold">Demonstration.</strong> <span className="text-dim">Simulated data from three fictional operators. Not used by, or affiliated with, any city.</span>
               {demoResetEnabled() && (
                 <>
                   {" "}
-                  <span className="text-white/75">Other visitors see what you change here, until it is put back each night.</span> <DemoReset />
+                  <span className="text-dim">Other visitors see what you change here, until it is put back each night.</span> <DemoReset />
                 </>
               )}
             </p>
             <ViewAs current={person.userId} people={people.map((p) => ({ userId: p.userId, name: p.name, title: p.title, roleLabel: ROLE_LABELS[p.role] }))} />
           </div>
         </div>
-        <div className="frame flex min-h-0 flex-1 flex-col lg:flex-row">
-          <header style={{ background: "var(--side)" }} className="no-print relative z-10 flex shrink-0 shadow-[var(--shadow-sm)] items-center gap-3 max-lg:flex-wrap max-lg:gap-y-0 border-b border-line px-4 lg:w-56 lg:flex-col lg:items-stretch lg:gap-6 lg:overflow-y-auto lg:border-b-0 lg:border-r lg:px-3 lg:py-5">
-            <Link href="/" className="shrink-0 max-lg:py-2 lg:px-2.5">
-              <span className="block text-[0.9375rem] font-semibold leading-tight tracking-tight">Micromobility Monitor</span>
-              <span className="block text-[0.8125rem] text-faint max-lg:hidden">{CITY_NAME}, simulated</span>
-            </Link>
-            <Nav items={items} />
-            <div className="max-lg:ml-auto lg:mt-auto lg:border-t lg:border-line lg:pt-3">
-              <p className="px-2.5 pb-2 max-lg:hidden">
-                <span className="block font-medium">{person.name}</span>
-                <span className="block text-[0.8125rem] text-faint">{ROLE_LABELS[person.role]}</span>
-              </p>
-              <Link href="/open-data" className="link block px-2.5 pb-2 text-[0.8125rem] text-dim max-lg:hidden">
-                Public open-data page
-              </Link>
-              <ThemeToggle initial={theme} />
+        <div className="frame flex min-h-0 flex-1 flex-col">
+          <header style={{ background: "var(--side)" }} className="no-print relative z-10 shrink-0 border-b border-line shadow-[var(--shadow-sm)] backdrop-blur">
+            <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8">
+              <div className="flex items-center gap-x-5 pb-1 pt-3">
+                <Link href="/" className="flex min-w-0 shrink-0 items-center gap-2.5">
+                  <Wordmark />
+                  <span className="min-w-0">
+                    <span className="block font-display text-[1.0625rem] font-semibold leading-tight tracking-[-0.02em]">Micromobility Monitor</span>
+                    <span className="block text-[0.8125rem] leading-tight text-faint">{CITY_NAME}, simulated</span>
+                  </span>
+                </Link>
+                <div className="ml-auto flex min-w-0 items-center gap-x-4">
+                  <Link href="/open-data" className="link whitespace-nowrap text-[0.875rem] text-dim max-md:hidden">
+                    Public open-data page
+                  </Link>
+                  <p className="min-w-0 border-l border-line pl-4 text-right leading-tight max-sm:hidden">
+                    <span className="block truncate font-semibold">{person.name}</span>
+                    <span className="block truncate text-[0.8125rem] text-faint">{ROLE_LABELS[person.role]}</span>
+                  </p>
+                  <ThemeToggle initial={theme} />
+                </div>
+              </div>
+              <Nav items={items} />
             </div>
           </header>
           <div className="frame-main flex min-h-0 min-w-0 flex-1 flex-col lg:overflow-y-auto">{children}</div>

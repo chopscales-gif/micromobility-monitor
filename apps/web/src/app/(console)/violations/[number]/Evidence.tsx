@@ -21,7 +21,7 @@ function Fact({ label, children, color }: { label: string; children: React.React
 
 function Panel({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
-    <section className="panel px-5 pb-4 pt-4">
+    <section className="panel px-6 pb-5 pt-5">
       <h2 className="heading">{title}</h2>
       {note && <p className="mt-2.5 text-[0.8125rem] text-dim">{note}</p>}
       {children}
@@ -35,7 +35,7 @@ function MapPanel({ zones, points, note }: { zones: Zones; points: { lng: number
     <section>
       <h2 className="heading">Where</h2>
       <p className="mt-2.5 text-[0.8125rem] text-dim">{note}</p>
-      <div data-theme="dark" className="relative mt-3 h-[22rem] overflow-hidden rounded-xl bg-ink text-text shadow-[var(--shadow-md)]">
+      <div data-theme="light" className="relative mt-3 h-[22rem] overflow-hidden rounded-xl bg-ink text-text shadow-[var(--shadow-md)]">
         <EvidenceMapLoader zones={zones} points={points} />
       </div>
     </section>

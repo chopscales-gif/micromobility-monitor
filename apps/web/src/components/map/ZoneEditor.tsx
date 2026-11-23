@@ -27,8 +27,8 @@ function crossesItself(points: LngLat[]): boolean {
 
 const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 // The shape being drawn, in fixed colours for the canvas (the text beside the map calls it orange).
-const DRAFT = "#ff5a36";
-const DRAFT_CORE = "#0c0f12";
+const DRAFT = "#e2531c";
+const DRAFT_CORE = "#ffffff";
 
 export default function ZoneEditor({ zones, canEdit, adopt }: { zones: GeoJSON.FeatureCollection; canEdit: boolean; adopt: (formData: FormData) => void | Promise<void> }) {
   const holder = useRef<HTMLDivElement>(null);
@@ -110,8 +110,8 @@ export default function ZoneEditor({ zones, canEdit, adopt }: { zones: GeoJSON.F
 
   return (
     <div className={`grid items-start gap-6 ${canEdit ? "lg:grid-cols-[minmax(0,1fr)_23rem]" : ""}`}>
-      {/* The map and its key are drawn dark in either theme, so zones keep one set of colours. */}
-      <div data-theme="dark" className="min-w-0 overflow-hidden rounded-xl bg-ink text-text shadow-[var(--shadow-md)]">
+      {/* The map and its key are drawn light in either theme, so zones keep one set of colours. */}
+      <div data-theme="light" className="min-w-0 overflow-hidden rounded-xl bg-ink text-text shadow-[var(--shadow-md)]">
         <div className="relative h-[24rem] sm:h-[34rem]">
           <div ref={holder} className="h-full w-full" role="application" aria-label="Map of the city's policy zones. The same zones are listed below the map." />
           {mode === "draw" && (
@@ -131,7 +131,7 @@ export default function ZoneEditor({ zones, canEdit, adopt }: { zones: GeoJSON.F
       </div>
 
       {canEdit && (
-        <section className="panel p-5">
+        <section className="panel p-6">
           <h2 className="heading">Add a zone</h2>
           {mode === "idle" ? (
             <>

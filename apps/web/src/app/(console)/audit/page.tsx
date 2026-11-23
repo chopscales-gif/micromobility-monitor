@@ -35,13 +35,13 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
   if (trail instanceof Refused) return <Refusal person={person} permission={trail.permission} />;
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead title="Who looked at what, and what they were refused" aside={<Choice options={FILTERS} current={only ?? "all"} />}>
         Every read, export and change of operator data is written here before the data is returned, including the attempts that were turned away. Entries cannot be edited or removed from the
         application. Repeated automatic refreshes of the same screen are folded into one entry with a count.
       </PageHead>
 
-      <dl className="panel grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-3 sm:divide-x">
+      <dl className="stats grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-3 sm:divide-x">
         {(
           [
             ["Entries on record", count(trail.total), undefined],
@@ -51,14 +51,14 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
         ).map(([label, value, color]) => (
           <div key={label} className="px-5 py-4">
             <dt className="label">{label}</dt>
-            <dd className="figure mt-1 text-[1.75rem]" style={{ color }}>
+            <dd className="figure text-[2.375rem]" style={{ color }}>
               {value}
             </dd>
           </div>
         ))}
       </dl>
 
-      <section className="panel px-5 pb-2 pt-4">
+      <section className="panel px-6 pb-3 pt-5">
         <h2 className="heading">
           Entries
           <small>newest first</small>

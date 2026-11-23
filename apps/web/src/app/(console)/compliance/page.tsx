@@ -172,10 +172,10 @@ function Summary({ s, you }: { s: OperatorStanding; you: boolean }) {
   const open = s.rules.flatMap((r) => r.notices).filter((n) => n.status !== "resolved").length;
   const left = Math.max(TOP - 1 - worst.counted, 0);
   return (
-    <dl className="panel grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-3 sm:divide-x">
+    <dl className="stats grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-3 sm:divide-x">
       <div className="px-5 py-4">
         <dt className="label">Closest to a permit review</dt>
-        <dd className="figure mt-1 text-[1.375rem]" style={{ color: rungColor(worst.counted) }}>
+        <dd className="figure text-[1.5rem]" style={{ color: rungColor(worst.counted) }}>
           {worst.counted === 0 ? "No rule" : ruleLabel(worst.kind)}
         </dd>
         <dd className="mt-1 text-[0.8125rem] text-dim">
@@ -190,12 +190,12 @@ function Summary({ s, you }: { s: OperatorStanding; you: boolean }) {
       </div>
       <div className="px-5 py-4">
         <dt className="label">Notices that count, last {LADDER_WINDOW_MONTHS} months</dt>
-        <dd className="figure mt-1 text-[1.375rem]">{count(total)}</dd>
+        <dd className="figure text-[1.5rem]">{count(total)}</dd>
         <dd className="mt-1 text-[0.8125rem] text-dim">across {count(s.rules.filter((r) => r.counted > 0).length)} of {s.rules.length} rules; withdrawn notices are left out</dd>
       </div>
       <div className="px-5 py-4">
         <dt className="label">Still open</dt>
-        <dd className="figure mt-1 text-[1.375rem]" style={{ color: open > 0 ? FAIR : GOOD }}>
+        <dd className="figure text-[1.5rem]" style={{ color: open > 0 ? FAIR : GOOD }}>
           {count(open)}
         </dd>
         <dd className="mt-1 text-[0.8125rem] text-dim">
@@ -213,7 +213,7 @@ export default async function CompliancePage() {
   const you = person.role === "operator";
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead title={you ? "Where you stand on each rule" : "Where each operator stands on each rule"}>
         {you ? (
           <>
@@ -233,14 +233,14 @@ export default async function CompliancePage() {
             </h2>
           )}
           <Summary s={s} you={you} />
-          <section className="panel px-5 pt-4">
+          <section className="panel px-6 pt-5">
             <h2 className="heading">
               {you ? "Your fleet against the rules, right now" : "The fleet against the rules, right now"}
               <small>a reading to act on before it becomes a finding</small>
             </h2>
             <Now n={s.now} rules={s.rules} you={you} />
           </section>
-          <section className="panel px-5 pb-1 pt-4">
+          <section className="panel px-6 pb-2 pt-5">
             <h2 className="heading">
               The escalation ladder, rule by rule
               <small>

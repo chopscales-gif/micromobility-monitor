@@ -17,7 +17,7 @@ const WITHHELD = <span className="text-faint">withheld</span>;
 
 function Sheet({ title, note, children, id }: { title: string; note?: React.ReactNode; children: React.ReactNode; id?: string }) {
   return (
-    <section id={id} className="panel min-w-0 scroll-mt-4 px-5 pb-3 pt-4">
+    <section id={id} className="panel min-w-0 scroll-mt-4 px-6 pb-4 pt-5">
       <h2 className="heading">
         {title}
         {note && <small>{note}</small>}
@@ -34,7 +34,7 @@ export default async function OpenDataPage({ searchParams }: { searchParams: Pro
 
   if (!data) {
     return (
-      <main className="mx-auto w-full max-w-[72rem] space-y-6 px-4 py-8 lg:px-8">
+      <main className="mx-auto w-full max-w-[76rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
         <PageHead title="Shared scooters and bikes">Figures are published here once a month has finished. No month has finished yet.</PageHead>
       </main>
     );
@@ -64,28 +64,44 @@ export default async function OpenDataPage({ searchParams }: { searchParams: Pro
           key: String(h.hour),
           title: h[key] === null ? `${hourSpan(h.hour)}: withheld, fewer than ${K_ANONYMITY_MIN} rides in the month` : `${hourSpan(h.hour)}: about ${count(Math.round(h[key]! / days))} rides a day`,
           tick: h.hour % 6 === 0 ? hourLabel(h.hour) : undefined,
-          segments: [{ key: "n", value: (h[key] ?? 0) / days, color: "var(--color-control)" }],
+          segments: [{ key: "n", value: (h[key] ?? 0) / days, color: "var(--color-bar)" }],
         }))}
       />
     </div>
   );
 
   return (
-    <main className="mx-auto w-full max-w-[72rem] space-y-6 px-4 py-8 lg:px-8">
-      <PageHead
-        above={`Open data · ${CITY_NAME}, simulated`}
-        title={`Shared scooters and bikes, ${data.label}`}
-        aside={months.length > 1 ? <Choice current={data.period} options={[...months].reverse().map((m) => ({ key: m.period, href: `/open-data?month=${m.period}`, label: m.label }))} /> : undefined}
-      >
-        How much the shared scooters and bikes were used, by day, by hour and by part of the city. These are counts only. <a href="#privacy" className="link">No single ride is published</a>, and anyone may open this page
-        without signing in.
-      </PageHead>
+    <>
+      {/* The first screen sits on a photograph of the city, washed so the words read. The photograph is stock. */}
+      <section className="hero relative isolate">
+        <div aria-hidden="true" className="hero-photo absolute inset-0 -z-10" />
+        <div className="mx-auto w-full max-w-[76rem] px-4 pb-28 pt-12 lg:px-8 lg:pb-36 lg:pt-20">
+          <p className="mb-4 inline-flex rounded-full bg-panel/80 px-3.5 py-1.5 text-[0.875rem] font-semibold text-signal shadow-[var(--shadow-sm)] backdrop-blur">Open data · {CITY_NAME}, simulated</p>
+          <h1 className="hero-title max-w-[17ch] font-display font-semibold">
+            Shared scooters and bikes, <span className="text-signal">{data.label}</span>
+          </h1>
+          <p className="lede mt-5 max-w-[58ch] !text-text">
+            How much the shared scooters and bikes were used, by day, by hour and by part of the city. These are counts only.{" "}
+            <a href="#privacy" className="link">
+              No single ride is published
+            </a>
+            , and anyone may open this page without signing in.
+          </p>
+          <div className="mt-7 flex flex-wrap items-center gap-3">
+            <a href="#download" className="btn btn-signal">
+              Download the figures
+            </a>
+            {months.length > 1 && <Choice current={data.period} options={[...months].reverse().map((m) => ({ key: m.period, href: `/open-data?month=${m.period}`, label: m.label }))} />}
+          </div>
+        </div>
+      </section>
 
-      <dl className="panel grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 lg:grid-cols-4 lg:divide-x">
+      <main className="mx-auto -mt-20 w-full max-w-[76rem] space-y-8 px-4 pb-12 lg:-mt-24 lg:px-8 lg:pb-16">
+      <dl className="stats stats-solid relative grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 lg:grid-cols-4 lg:divide-x">
         {figures.map(([label, value, note]) => (
           <div key={label} className="px-5 py-4">
             <dt className="label">{label}</dt>
-            <dd className="figure mt-1 text-[1.75rem]">{value}</dd>
+            <dd className="figure text-[2.375rem] text-signal">{value}</dd>
             <dd className="mt-1 text-[0.8125rem] text-dim">{note}</dd>
           </div>
         ))}
@@ -102,7 +118,7 @@ export default async function OpenDataPage({ searchParams }: { searchParams: Pro
               key: d.date,
               title: d.trips === null ? `${plainDay(d.date)}: withheld` : `${plainDay(d.date)}: ${count(d.trips)} rides`,
               tick: i % 7 === 0 ? plainShort(d.date) : undefined,
-              segments: [{ key: "n", value: d.trips ?? 0, color: "var(--color-control)" }],
+              segments: [{ key: "n", value: d.trips ?? 0, color: "var(--color-bar)" }],
             }))}
           />
         </div>
@@ -191,7 +207,7 @@ export default async function OpenDataPage({ searchParams }: { searchParams: Pro
           </ul>
         </Sheet>
 
-        <Sheet title="Download" note={data.label}>
+        <Sheet id="download" title="Download" note={data.label}>
           <ul>
             {FILES.map((f) => (
               <li key={f.file} className="row grid-cols-[minmax(0,1fr)_auto] last:border-b-0">
@@ -205,6 +221,8 @@ export default async function OpenDataPage({ searchParams }: { searchParams: Pro
           <p className="pt-2 text-[0.8125rem] text-faint">Every file holds the same published counts as this page and says at the top that it is a demonstration. Worked out {dateTime(data.generatedAt)} Mountain Time.</p>
         </Sheet>
       </div>
+      <p className="text-[0.8125rem] text-faint">The photograph at the top of this page is a stock picture from Unsplash. It was not taken for this demonstration and shows no part of it.</p>
     </main>
+    </>
   );
 }

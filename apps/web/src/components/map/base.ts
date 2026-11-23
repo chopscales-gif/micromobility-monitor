@@ -9,11 +9,11 @@ export const TILE_BOUNDS: [number, number, number, number] = [-112.0, 40.7, -111
 
 export function mapStyle(): maplibregl.StyleSpecification {
   const origin = window.location.origin;
-  const flavor = { ...namedFlavor("dark"), background: "#0c0f12", earth: "#14181d", water: "#1d2733", buildings: "#0f1215" };
+  const flavor = { ...namedFlavor("light"), background: "#f3efea", earth: "#f8f5f1", water: "#cfe3ee", buildings: "#ebe4dc" };
   return {
     version: 8,
     glyphs: `${origin}/basemap/fonts/{fontstack}/{range}.pbf`,
-    sprite: `${origin}/basemap/sprites/dark`,
+    sprite: `${origin}/basemap/sprites/light`,
     sources: {
       protomaps: {
         type: "vector",
@@ -60,7 +60,7 @@ const ZONE_COLOR = ["match", ["get", "type"], ...Object.entries(ZONE_STYLES).fla
 /** Draws policy zones under whatever else the map shows. Call once the map has loaded. */
 export function addZoneLayers(map: maplibregl.Map, zones: GeoJSON.FeatureCollection, { labels = false } = {}) {
   map.addSource("zones", { type: "geojson", data: zones });
-  map.addLayer({ id: "zones-fill", type: "fill", source: "zones", filter: ["!=", ["get", "type"], "service_area"], paint: { "fill-color": ZONE_COLOR, "fill-opacity": 0.13 } });
+  map.addLayer({ id: "zones-fill", type: "fill", source: "zones", filter: ["!=", ["get", "type"], "service_area"], paint: { "fill-color": ZONE_COLOR, "fill-opacity": 0.16 } });
   map.addLayer({
     id: "zones-line",
     type: "line",
@@ -74,7 +74,7 @@ export function addZoneLayers(map: maplibregl.Map, zones: GeoJSON.FeatureCollect
       source: "zones",
       filter: ["!=", ["get", "type"], "service_area"],
       layout: { "text-field": ["get", "name"], "text-font": ["Noto Sans Medium"], "text-size": 11, "text-max-width": 9 },
-      paint: { "text-color": ZONE_COLOR, "text-halo-color": "#0c0f12", "text-halo-width": 1.5 },
+      paint: { "text-color": ZONE_COLOR, "text-halo-color": "#ffffff", "text-halo-width": 1.5 },
     });
   }
 }

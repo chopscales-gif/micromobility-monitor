@@ -50,7 +50,7 @@ export default async function InvoicePage({ params, searchParams }: Props) {
   const base = `/invoices/${invoice.number}`;
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <div className="no-print flex flex-wrap items-center justify-between gap-3">
         <Link href="/invoices" className="link text-dim">
           All invoices
@@ -106,7 +106,7 @@ export default async function InvoicePage({ params, searchParams }: Props) {
       )}
 
       {person.role !== "operator" && (
-        <section className="no-print panel p-5">
+        <section className="no-print panel p-6">
           <h2 className="heading">
             {issued ? "Signed off and issued" : maySign ? "Next step: check it and sign it off" : "Awaiting finance sign-off"}
             <Status color={issued ? "var(--color-good)" : "var(--color-fair)"} className="aside !font-semibold">
@@ -240,7 +240,7 @@ export default async function InvoicePage({ params, searchParams }: Props) {
 
         {/* The audit: the city's count beside the operator's */}
         <div className="no-print min-w-0 space-y-6">
-          <section className="panel px-5 pb-4 pt-4">
+          <section className="panel px-6 pb-5 pt-5">
             <h2 className="heading">
               Reconciliation
               <small>against the operator&rsquo;s report</small>
@@ -251,12 +251,12 @@ export default async function InvoicePage({ params, searchParams }: Props) {
             <dl className="grid grid-cols-2 divide-x divide-line border-b border-line">
               <div className="min-w-0 py-4 pr-4">
                 <dt className="label">The city counted</dt>
-                <dd className="figure mt-1 text-[1.75rem]">{count(invoice.observedTrips)}</dd>
+                <dd className="figure text-[2.375rem]">{count(invoice.observedTrips)}</dd>
                 <dd className="mt-1 text-[0.8125rem] text-dim">valid trip records received</dd>
               </div>
               <div className="min-w-0 py-4 pl-4">
                 <dt className="label">The operator reported</dt>
-                <dd className="figure mt-1 text-[1.75rem]">{invoice.reportedTrips === null ? "–" : count(invoice.reportedTrips)}</dd>
+                <dd className="figure text-[2.375rem]">{invoice.reportedTrips === null ? "–" : count(invoice.reportedTrips)}</dd>
                 <dd className="mt-1 text-[0.8125rem] text-dim">in its monthly report</dd>
               </div>
             </dl>
@@ -283,7 +283,7 @@ export default async function InvoicePage({ params, searchParams }: Props) {
             </p>
           </section>
 
-          <section className="panel px-5 pb-2 pt-4">
+          <section className="panel px-6 pb-3 pt-5">
             <h2 className="heading">
               Trip records rejected this month
               {invoice.rejected.length > 0 && (
@@ -314,7 +314,7 @@ export default async function InvoicePage({ params, searchParams }: Props) {
             )}
           </section>
 
-          <section className="panel px-5 pb-4 pt-4">
+          <section className="panel px-6 pb-5 pt-5">
             <h2 className="heading">
               Rides counted, day by day
               <small>busiest day {count(busiest)}</small>

@@ -13,12 +13,12 @@ export function ThemeToggle({ initial }: { initial: Theme }) {
     setTheme(next);
   };
   return (
-    <button type="button" onClick={flip} aria-label={`Switch to the ${theme === "dark" ? "light" : "dark"} theme`} className="flex shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[0.8125rem] text-dim transition-colors hover:bg-raise hover:text-text">
+    <button type="button" onClick={flip} aria-label={`Switch to the ${theme === "dark" ? "light" : "dark"} theme`} className="flex shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full border border-line px-2.5 py-2 text-[0.8125rem] text-dim transition-colors hover:bg-raise hover:text-text">
       <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
         <circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" />
         <path d="M7 1a6 6 0 0 1 0 12Z" fill="currentColor" />
       </svg>
-      <span className="max-lg:sr-only">{theme === "dark" ? "Light theme" : "Dark theme"}</span>
+      <span className="sr-only">{theme === "dark" ? "Light theme" : "Dark theme"}</span>
     </button>
   );
 }

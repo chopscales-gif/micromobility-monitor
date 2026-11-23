@@ -46,7 +46,7 @@ export default async function FeesPage({ searchParams }: Props) {
   const start = current ?? fees.history[0];
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead title="The fee schedule every invoice is calculated from">
         A schedule is never edited. A new one is adopted with a date it takes effect, the old one stays on record, and each invoice keeps a copy of the terms it was calculated under.
       </PageHead>
@@ -73,7 +73,7 @@ export default async function FeesPage({ searchParams }: Props) {
       )}
 
       {current ? (
-        <section className="panel px-5 pb-4 pt-4">
+        <section className="panel px-6 pb-5 pt-5">
           <h2 className="heading">
             In force since {plainDate(current.effectiveFrom)}
             <Status color="var(--color-good)" className="aside !font-semibold">
@@ -106,11 +106,11 @@ export default async function FeesPage({ searchParams }: Props) {
           </div>
         </section>
       ) : (
-        <p className="panel p-5 text-dim">No fee schedule is in force yet.</p>
+        <p className="panel p-6 text-dim">No fee schedule is in force yet.</p>
       )}
 
       {upcoming.map((s) => (
-        <section key={s.id} className="panel px-5 pb-4 pt-4">
+        <section key={s.id} className="panel px-6 pb-5 pt-5">
           <h2 className="heading">
             Takes effect {plainDate(s.effectiveFrom)}
             <Status color="var(--color-fair)" className="aside !font-semibold">
@@ -155,7 +155,7 @@ export default async function FeesPage({ searchParams }: Props) {
       ))}
 
       <div className="grid items-start gap-6 xl:grid-cols-2">
-        <section className="panel min-w-0 px-5 pb-4 pt-4">
+        <section className="panel min-w-0 px-6 pb-5 pt-5">
           <h2 className="heading">
             Permitted devices
             <small>the device fee is charged on these, for the days each permit is in force</small>
@@ -205,7 +205,7 @@ export default async function FeesPage({ searchParams }: Props) {
 
         <div className="min-w-0 space-y-6">
           {mayChange ? (
-            <section className="panel p-5">
+            <section className="panel p-6">
               <h2 className="heading">
                 Adopt a new schedule
                 <small>takes effect on a future date; invoices already issued keep the terms they were calculated under</small>
@@ -249,12 +249,12 @@ export default async function FeesPage({ searchParams }: Props) {
               </form>
             </section>
           ) : (
-            <p className="panel p-5 text-dim">
+            <p className="panel p-6 text-dim">
               Only the program manager can adopt a new fee schedule. This seat, <strong className="font-semibold text-text">{person.name}</strong>, can read it.
             </p>
           )}
 
-          <section className="panel px-5 pb-4 pt-4">
+          <section className="panel px-6 pb-5 pt-5">
             <h2 className="heading">Every schedule on record</h2>
             <div className="overflow-x-auto">
               <table className="grid-table stack">

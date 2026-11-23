@@ -11,7 +11,7 @@ export function DemoReset() {
       type="button"
       disabled={pending}
       onClick={() => start(() => resetDemo())}
-      className="cursor-pointer whitespace-nowrap font-medium text-white underline decoration-white/40 underline-offset-2 hover:decoration-white disabled:cursor-wait disabled:no-underline disabled:opacity-70"
+      className="cursor-pointer whitespace-nowrap font-semibold text-signal underline decoration-signal/40 underline-offset-2 hover:decoration-signal disabled:cursor-wait disabled:no-underline disabled:opacity-70"
     >
       {pending ? "Putting it back…" : "Reset it now"}
     </button>

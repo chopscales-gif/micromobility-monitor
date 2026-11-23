@@ -21,7 +21,7 @@ type Tile = [label: string, value: string, note: string, color?: string];
 function Group({ title, note, invoices }: { title: string; note?: string; invoices: InvoiceSummary[] }) {
   if (invoices.length === 0) return null;
   return (
-    <section className="panel px-5 pb-2 pt-4">
+    <section className="panel px-6 pb-3 pt-5">
       <h2 className="heading">
         {title}
         {note && <small>{note}</small>}
@@ -82,17 +82,17 @@ export default async function InvoicesPage() {
   ];
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead title={isOperator ? "Your monthly invoices, checked against your own report" : "Monthly invoices, checked against each operator's own report"}>
         Each invoice is calculated from the trip records the city received, never from the operator&rsquo;s summary. The operator&rsquo;s monthly report is then set beside it, and any gap
         larger than the tolerance is flagged. {isOperator ? "An invoice appears here once the city's finance office has signed it off." : "Finance signs each invoice off before the operator sees it; from then on it is never recalculated."}
       </PageHead>
 
-      <dl className="panel grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 lg:grid-cols-4 lg:divide-x">
+      <dl className="stats grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 lg:grid-cols-4 lg:divide-x">
         {tiles.map(([label, value, note, color]) => (
           <div key={label} className="min-w-0 px-5 py-4">
             <dt className="label">{label}</dt>
-            <dd className="figure mt-1 text-[1.75rem]" style={{ color }}>
+            <dd className="figure text-[2.375rem]" style={{ color }}>
               {value}
             </dd>
             <dd className="mt-1 text-[0.8125rem] text-dim">{note}</dd>
@@ -101,7 +101,7 @@ export default async function InvoicesPage() {
       </dl>
 
       {invoices.length === 0 ? (
-        <p className="panel p-5 text-dim">{isOperator ? "No invoice has been issued to you yet. The city's finance office signs each one off before it appears here." : "No invoices yet. One is drawn up for each operator once its monthly report arrives."}</p>
+        <p className="panel p-6 text-dim">{isOperator ? "No invoice has been issued to you yet. The city's finance office signs each one off before it appears here." : "No invoices yet. One is drawn up for each operator once its monthly report arrives."}</p>
       ) : (
         <>
           <Group title="Awaiting sign-off" note={maySign ? "yours to check and issue" : "with finance; the operator cannot see these yet"} invoices={drafts} />

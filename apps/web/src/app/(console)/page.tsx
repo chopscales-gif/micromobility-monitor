@@ -27,11 +27,11 @@ type Tile = [label: string, value: string, note: string, color: string | undefin
 /** The few counts a seat steers by, on one sheet, each a link to the list behind it. */
 function Tiles({ tiles }: { tiles: Tile[] }) {
   return (
-    <dl className={`panel grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 ${tiles.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"} lg:divide-x`}>
+    <dl className={`stats grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 ${tiles.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"} lg:divide-x`}>
       {tiles.map(([label, value, note, color, href]) => (
         <Link key={label} href={href} className="block px-5 py-4 transition-colors hover:bg-raise">
           <dt className="label">{label}</dt>
-          <dd className="figure mt-1 text-[1.75rem]" style={{ color }}>
+          <dd className="figure text-[2.375rem]" style={{ color }}>
             {value}
           </dd>
           <dd className="mt-1 text-[0.8125rem] text-dim">{note}</dd>
@@ -44,7 +44,7 @@ function Tiles({ tiles }: { tiles: Tile[] }) {
 /** A sheet with a heading, and optionally a link to the page behind it. */
 function Sheet({ title, note, more, children, id }: { title: React.ReactNode; note?: React.ReactNode; more?: { href: string; label: string }; children: React.ReactNode; id?: string }) {
   return (
-    <section id={id} className="panel scroll-mt-4 px-5 pb-2 pt-4">
+    <section id={id} className="panel scroll-mt-4 px-6 pb-3 pt-5">
       <h2 className="heading">
         {title}
         {note && <small>{note}</small>}
@@ -248,7 +248,7 @@ function Standing({ feeds, record, cases, invoices, now }: { feeds: FeedNow[]; r
 }
 
 const Clear = ({ children }: { children: React.ReactNode }) => (
-  <div className="panel px-5 py-4">
+  <div className="panel px-6 py-5">
     <p className="status text-good">All clear</p>
     <p className="mt-1 text-dim">{children}</p>
   </div>
@@ -505,7 +505,7 @@ export default async function HomePage() {
   const person = await currentPerson();
   const now = Date.now();
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       {person.role === "analyst" ? (
         <Analyst person={person} now={now} />
       ) : person.role === "program_manager" ? (

@@ -5,7 +5,7 @@ export function PageHead({ title, children, aside, above }: { title: string; chi
       <div className="min-w-0 max-w-3xl">
         {above && <p className="mb-2 text-[0.8125rem] text-faint">{above}</p>}
         <h1 className="title">{title}</h1>
-        {children && <p className="lede mt-2">{children}</p>}
+        {children && <p className="lede mt-3">{children}</p>}
       </div>
       {aside}
     </div>
@@ -15,13 +15,13 @@ export function PageHead({ title, children, aside, above }: { title: string; chi
 /** A row of links that choose between views of the same page. */
 export function Choice({ options, current }: { options: { href: string; label: string; key: string }[]; current: string }) {
   return (
-    <nav className="no-print flex rounded-lg border border-line bg-raise p-0.5" aria-label="View">
+    <nav className="no-print flex rounded-full border border-line bg-raise p-1" aria-label="View">
       {options.map((o) => (
         <a
           key={o.key}
           href={o.href}
           aria-current={o.key === current ? "page" : undefined}
-          className={`whitespace-nowrap rounded-md px-3 py-1.5 text-[0.8125rem] ${o.key === current ? "bg-panel font-semibold text-text shadow-[var(--shadow-sm)]" : "text-dim hover:text-text"}`}
+          className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[0.875rem] ${o.key === current ? "bg-panel font-semibold text-text shadow-[var(--shadow-sm)]" : "text-dim hover:text-text"}`}
         >
           {o.label}
         </a>

@@ -7,7 +7,7 @@ const MapConsole = dynamic(() => import("./MapConsole"), {
   ssr: false,
   // Dark from the first paint, like the console that replaces it.
   loading: () => (
-    <p data-theme="dark" className="absolute inset-0 grid place-items-center bg-ink text-dim">
+    <p data-theme="light" className="absolute inset-0 grid place-items-center bg-ink text-dim">
       Loading the map…
     </p>
   ),

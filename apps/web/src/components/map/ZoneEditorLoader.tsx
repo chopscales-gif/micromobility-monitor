@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 const ZoneEditor = dynamic(() => import("./ZoneEditor"), {
   ssr: false,
   loading: () => (
-    <p data-theme="dark" className="grid h-[24rem] place-items-center rounded-xl bg-ink text-dim shadow-[var(--shadow-md)] sm:h-[34rem]">
+    <p data-theme="light" className="grid h-[24rem] place-items-center rounded-xl bg-ink text-dim shadow-[var(--shadow-md)] sm:h-[34rem]">
       Loading the map…
     </p>
   ),

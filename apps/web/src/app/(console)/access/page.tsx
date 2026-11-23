@@ -23,13 +23,13 @@ export default async function AccessPage() {
   if (people instanceof Refused) return <Refusal person={person} permission={people.permission} />;
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead title="Who holds which seat, and what each seat can do">
         Six seats, each with a fixed set of permissions that the server checks on every request. In this demonstration a seat is chosen with the picker at the top of the page; the platform is built so that a
         city&rsquo;s own single sign-on (OpenID Connect) takes its place, and nothing else changes.
       </PageHead>
 
-      <section className="panel px-5 pb-2 pt-4">
+      <section className="panel px-6 pb-3 pt-5">
         <h2 className="heading">
           Seats and who holds them
           <small>
@@ -75,7 +75,7 @@ export default async function AccessPage() {
         </ul>
       </section>
 
-      <section className="panel px-5 pb-4 pt-4">
+      <section className="panel px-6 pb-5 pt-5">
         <h2 className="heading">What each seat may do</h2>
         <div className="overflow-x-auto">
           <table className="grid-table min-w-[48rem]">

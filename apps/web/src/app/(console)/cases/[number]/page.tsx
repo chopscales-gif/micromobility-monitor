@@ -84,7 +84,7 @@ function Quote({ note, by, at }: { note: string; by: string; at: number }) {
 /** One of the action sheets in the side column: a heading that says whose move it is, then the forms. */
 function Action({ title, children }: { title: React.ReactNode; children?: React.ReactNode }) {
   return (
-    <section className="panel p-5">
+    <section className="panel p-6">
       <h2 className="heading">{title}</h2>
       <div className="mt-4 space-y-4">{children}</div>
     </section>
@@ -97,7 +97,7 @@ function Ladder({ c, forOperator }: { c: CaseDetail; forOperator: boolean }) {
   const counted = c.history.filter((h) => h.counts);
   const withdrawn = c.history.filter((h) => !h.counts);
   return (
-    <section className="panel px-5 pb-4 pt-4">
+    <section className="panel px-6 pb-5 pt-5">
       <h2 className="heading">
         Escalation ladder
         <small>{ruleLabel(c.kind)}</small>
@@ -328,7 +328,7 @@ Please put this right and tell the city what was done by ${replyBy}. If you beli
   const cell = "border-line px-5 py-4 max-lg:border-b max-lg:last:border-b-0 sm:max-lg:odd:border-r sm:max-lg:[&:nth-last-child(2)]:border-b-0 lg:border-r lg:last:border-r-0";
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead
         title={caseTitle(c.kind, c.operatorName)}
         above={
@@ -404,7 +404,7 @@ Please put this right and tell the city what was done by ${replyBy}. If you beli
         <div className="min-w-0 space-y-6">
           <Ladder c={c} forOperator={isOperator} />
 
-          <section id="findings" className="panel scroll-mt-4 px-5 pb-2 pt-4">
+          <section id="findings" className="panel scroll-mt-4 px-6 pb-3 pt-5">
             <h2 className="heading">
               Findings in this case
               <small>{isOperator ? `${count(c.findings.length)} put to you` : `${count(c.counted)} counted · ${count(c.held)} held · ${count(c.setAside)} set aside`}</small>
@@ -548,7 +548,7 @@ Please put this right and tell the city what was done by ${replyBy}. If you beli
             </Action>
           )}
 
-          <section className="panel px-5 pb-5 pt-4">
+          <section className="panel px-6 pb-6 pt-5">
             <h2 className="heading">
               {isOperator ? "Between you and the city" : "History"}
               {c.events.length > 1 && <small>oldest first</small>}

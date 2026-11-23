@@ -14,7 +14,7 @@ export function Filter({ label, options }: { label: string; options: FilterOptio
             <Link
               href={o.href}
               aria-current={o.on ? "true" : undefined}
-              className={`flex items-center gap-2 rounded-md px-2.5 py-1 text-[0.8125rem] transition-colors ${o.on ? "bg-text font-semibold text-ink" : "text-dim hover:bg-raise hover:text-text"}`}
+              className={`flex items-center gap-2 rounded-full px-3 py-1 text-[0.875rem] transition-colors ${o.on ? "bg-tint font-semibold text-text" : "text-dim hover:bg-raise hover:text-text"}`}
             >
               {o.mark}
               {o.label}

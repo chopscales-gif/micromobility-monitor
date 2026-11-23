@@ -48,7 +48,7 @@ export default async function FindingPage({ params }: Props) {
   const ruleChanged = v.ruleNow !== null && JSON.stringify(Object.entries(v.ruleNow.params as object).sort()) !== JSON.stringify(Object.entries(v.params as object).sort());
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead
         title={title(v, v.operatorName)}
         above={
@@ -71,17 +71,17 @@ export default async function FindingPage({ params }: Props) {
 
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
         <div className="min-w-0 space-y-6">
-          <dl className="panel grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 sm:divide-x">
+          <dl className="stats grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 sm:divide-x">
             <div className="px-5 py-4">
               <dt className="label">{m.found}</dt>
-              <dd className="figure mt-1 text-[1.75rem] text-poor">
+              <dd className="figure text-[2.375rem] text-poor">
                 {one(v.measured)}
                 {m.unit}
               </dd>
             </div>
             <div className="px-5 py-4">
               <dt className="label">{m.allowed}</dt>
-              <dd className="figure mt-1 text-[1.75rem]">
+              <dd className="figure text-[2.375rem]">
                 {one(v.threshold)}
                 {m.unit}
               </dd>
@@ -91,7 +91,7 @@ export default async function FindingPage({ params }: Props) {
         </div>
 
         <aside className="space-y-6">
-          <section className="panel p-5">
+          <section className="panel p-6">
             <h2 className="heading">Part of case {v.case.ref}</h2>
             <p className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <Status color={cs.color}>{cs.label}</Status>
@@ -109,7 +109,7 @@ export default async function FindingPage({ params }: Props) {
           </section>
 
           {!isOperator && (
-            <section className="panel p-5">
+            <section className="panel p-6">
               <h2 className="heading">How firm this finding is</h2>
               <p className="mt-3">
                 <strong className="font-semibold" style={{ color: s.color }}>
@@ -137,7 +137,7 @@ export default async function FindingPage({ params }: Props) {
             </section>
           )}
 
-          <section className="panel p-5">
+          <section className="panel p-6">
             <h2 className="heading">The rule, as applied</h2>
             <p className="mt-3">{ruleSentence(v.kind, v.params)}</p>
             <p className="mt-2 text-[0.8125rem] text-dim">{METHODS[v.kind]}</p>

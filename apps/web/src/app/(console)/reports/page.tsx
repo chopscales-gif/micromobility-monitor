@@ -18,7 +18,7 @@ export const metadata: Metadata = { title: "Monthly report" };
 
 function Sheet({ title, note, aside, children }: { title: string; note?: React.ReactNode; aside?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <section className="panel min-w-0 px-5 pb-3 pt-4">
+    <section className="panel min-w-0 px-6 pb-4 pt-5">
       <h2 className="heading">
         {title}
         {note && <small>{note}</small>}
@@ -167,7 +167,7 @@ function Hours({ report }: { report: MonthlyReport }) {
           key: String(h.hour),
           title: `${hourSpan(h.hour)}: about ${count(Math.round(h[key]))} rides`,
           tick: h.hour % 6 === 0 ? hourLabel(h.hour) : undefined,
-          segments: [{ key: "n", value: h[key], color: "var(--color-control)" }],
+          segments: [{ key: "n", value: h[key], color: "var(--color-bar)" }],
         }))}
         scale={max}
       />
@@ -327,7 +327,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
   if (!report || !chosen) {
     return (
-      <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+      <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
         <PageHead title="Monthly report" aside={picker}>
           There are no rides on record for this month yet.
         </PageHead>
@@ -346,7 +346,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   const equityShare = report.city.equityTrips / report.city.trips;
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead
         title={`${report.label}${report.closed ? "" : " so far"}`}
         above="Monthly report"
@@ -372,11 +372,11 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
         )}
       </PageHead>
 
-      <dl className={`panel grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 ${figures.length >= 4 ? "lg:grid-cols-4" : figures.length === 3 ? "lg:grid-cols-3" : ""} lg:divide-x`}>
+      <dl className={`stats grid divide-line overflow-hidden max-sm:divide-y sm:grid-cols-2 ${figures.length >= 4 ? "lg:grid-cols-4" : figures.length === 3 ? "lg:grid-cols-3" : ""} lg:divide-x`}>
         {figures.map(([label, value, note]) => (
           <div key={label} className="px-5 py-4">
             <dt className="label">{label}</dt>
-            <dd className="figure mt-1 text-[1.75rem]">{value}</dd>
+            <dd className="figure text-[2.375rem]">{value}</dd>
             <dd className="mt-1 text-[0.8125rem] text-dim">{note}</dd>
           </div>
         ))}

@@ -22,10 +22,10 @@ export function CaseCard({ c, now, forOperator = false }: { c: CaseRow; now: num
   const due = clock(c, now, forOperator);
   const step = c.step ?? (c.status === "open" ? c.nextStep : null);
   return (
-    <Link href={`/cases/${c.number}`} className="row grid-cols-[1fr_auto] md:grid-cols-[10.5rem_minmax(0,1fr)_11.5rem] md:grid-rows-[auto_1fr] @4xl:grid-rows-none @4xl:grid-cols-[4.75rem_10.5rem_minmax(0,1fr)_6.5rem_12.5rem]">
+    <Link href={`/cases/${c.number}`} className="row grid-cols-[1fr_auto] md:grid-cols-[10.5rem_minmax(0,1fr)_11.5rem] md:grid-rows-[auto_1fr] @4xl:grid-rows-none @4xl:grid-cols-[5rem_11.5rem_minmax(0,1fr)_7.5rem_13rem]">
       <span className="text-faint max-md:order-2 max-md:text-right md:col-start-1 md:row-start-2 md:self-start md:text-[0.8125rem] @4xl:col-start-auto @4xl:row-start-auto @4xl:text-[length:inherit]">{c.ref}</span>
-      <Operator slug={c.operator} name={c.operatorName} className="max-md:order-1 md:col-start-1 md:row-start-1 @4xl:col-start-auto" />
-      <span className="min-w-0 max-md:order-3 max-md:col-span-2 md:col-start-2 md:row-span-2 md:row-start-1 @4xl:col-start-auto @4xl:row-span-1">
+      <Operator slug={c.operator} name={c.operatorName} className="max-md:order-1 md:col-start-1 md:row-start-1 @4xl:col-start-auto @4xl:row-start-auto" />
+      <span className="min-w-0 max-md:order-3 max-md:col-span-2 md:col-start-2 md:row-span-2 md:row-start-1 @4xl:col-start-auto @4xl:row-span-1 @4xl:row-start-auto">
         <span className="font-medium">{ruleLabel(c.kind)}</span>
         <span className="text-dim">, {weekLabel(c.week)}</span>
         <span className="block text-[0.8125rem] text-dim">
@@ -39,7 +39,7 @@ export function CaseCard({ c, now, forOperator = false }: { c: CaseRow; now: num
           )}
         </span>
       </span>
-      <Status color={s.color} className="max-md:order-4 md:col-start-3 md:row-start-1 @4xl:col-start-auto">
+      <Status color={s.color} className="max-md:order-4 md:col-start-3 md:row-start-1 @4xl:col-start-auto @4xl:row-start-auto">
         {s.label}
       </Status>
       <span className="max-md:order-5 max-md:text-right md:col-start-3 md:row-start-2 md:self-start md:text-[0.8125rem] @4xl:col-start-auto @4xl:row-start-auto @4xl:text-right @4xl:text-[length:inherit]">

@@ -1,22 +1,27 @@
 @import "tailwindcss";
 
-/* A working document, not a control room: an off-white page, ink text, hairlines, and colour only where it
-   carries a meaning. These are the light values; the dark ones follow and are switched by data-theme. */
+/* A bright civic page in the manner of a transit-planning site: white, a peach wash at the top, espresso
+   text, one coral for the brand and the primary action, and colour elsewhere only where it carries a meaning.
+   These are the light values; the dark ones follow and are switched by data-theme. */
 @theme static {
-  --color-ink: #f5f6f4;
+  --color-ink: #fffaf6;
   --color-deck: #ffffff;
   --color-panel: #ffffff;
-  --color-raise: #eceeec;
-  --color-line: #dfe2e1;
-  --color-rule: #c5cac9;
-  --color-control: #8b949c;
-  --color-text: #15181c;
-  --color-dim: #555e68;
-  --color-faint: #68717a;
-  /* The one action colour: the primary button and nothing else. */
-  --color-signal: #c93a17;
-  --color-signal-hover: #b23212;
+  --color-raise: #fbf0e8;
+  --color-line: #f0e5dc;
+  --color-rule: #e2d4c8;
+  --color-control: #988a7f;
+  --color-text: #2a1f1a;
+  --color-dim: #5f524a;
+  --color-faint: #766961;
+  /* The action colour: the primary button. Dark enough for white text. */
+  --color-signal: #cc4a18;
+  --color-signal-hover: #b8431a;
   --color-on-signal: #ffffff;
+  /* The brand coral, for marks and charts, with its pale tint and the pale bar beside a highlighted one. */
+  --color-brand: #ee6a34;
+  --color-tint: #fde9df;
+  --color-bar: #f9cfba;
   --color-paper: #fdfcf9;
   --color-paper-ink: #1b1e22;
 
@@ -47,38 +52,79 @@
   --color-zone-outside: #6a4fc4;
 
   --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-lexend), var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
 }
 
-/* Depth: surfaces sit above a softly graded page and cast a soft, layered shadow. */
-:root {
-  --page: linear-gradient(180deg, #f6f7f5 0%, #e9ece9 100%);
-  --surface: linear-gradient(180deg, #ffffff 0%, #fbfcfb 100%);
-  --surface-control: linear-gradient(180deg, #ffffff 0%, #f1f3f1 100%);
-  --surface-signal: linear-gradient(180deg, #dd4a22 0%, #c03413 100%);
-  --strip: linear-gradient(90deg, #15181c 0%, #262c33 100%);
-  --side: linear-gradient(180deg, #ffffff 0%, #f3f5f3 100%);
-  --shadow-sm: 0 1px 2px rgba(22, 28, 36, 0.07), 0 1px 1px rgba(22, 28, 36, 0.04);
-  --shadow-md: 0 1px 2px rgba(22, 28, 36, 0.06), 0 8px 20px -8px rgba(22, 28, 36, 0.14), 0 24px 48px -24px rgba(22, 28, 36, 0.18);
-  --shadow-lg: 0 2px 4px rgba(22, 28, 36, 0.06), 0 16px 40px -12px rgba(22, 28, 36, 0.22);
-  --shadow-signal: 0 1px 2px rgba(150, 40, 12, 0.3), 0 6px 14px -6px rgba(201, 58, 23, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+/* Depth: white surfaces on a page that is washed peach at the top, each casting a soft, warm shadow.
+   The light values are repeated under data-theme="light" because the maps are light in either theme. */
+:root,
+[data-theme="light"] {
+  --color-ink: #fffaf6;
+  --color-deck: #ffffff;
+  --color-panel: #ffffff;
+  --color-raise: #fbf0e8;
+  --color-line: #f0e5dc;
+  --color-rule: #e2d4c8;
+  --color-control: #988a7f;
+  --color-text: #2a1f1a;
+  --color-dim: #5f524a;
+  --color-faint: #766961;
+  --color-signal: #cc4a18;
+  --color-signal-hover: #b8431a;
+  --color-on-signal: #ffffff;
+  --color-brand: #ee6a34;
+  --color-tint: #fde9df;
+  --color-bar: #f9cfba;
+  --color-good: #1b7a48;
+  --color-fair: #8a5a00;
+  --color-poor: #b4213f;
+  --color-held: #5b6672;
+  --color-disputed: #7440b8;
+  --color-available: #1b7a48;
+  --color-trip: #0b6e99;
+  --color-idle: #8a5a00;
+  --color-elsewhere: #b4213f;
+  --color-removed: #68717a;
+  --color-kestrel: #3567cf;
+  --color-pronghorn: #c8388f;
+  --color-saltgrass: #84801c;
+  --color-zone-no-parking: #b4521a;
+  --color-zone-equity: #0f7a63;
+  --color-zone-outside: #6a4fc4;
+  --page: linear-gradient(180deg, #fff1e7 0, #fff8f3 14rem, #ffffff 30rem);
+  --surface: #ffffff;
+  --surface-control: #ffffff;
+  --surface-signal: linear-gradient(180deg, #d9531f 0%, #c64515 100%);
+  --strip: #fde9df;
+  --side: rgba(255, 255, 255, 0.86);
+  --wash: linear-gradient(135deg, #fff0e6 0%, #fff9f4 60%, #ffffff 100%);
+  --shadow-sm: 0 1px 2px rgba(92, 52, 28, 0.07);
+  --shadow-md: 0 1px 2px rgba(92, 52, 28, 0.05), 0 10px 28px -14px rgba(92, 52, 28, 0.2);
+  --shadow-lg: 0 2px 4px rgba(92, 52, 28, 0.06), 0 18px 44px -14px rgba(92, 52, 28, 0.28);
+  --shadow-signal: 0 1px 2px rgba(150, 50, 12, 0.25), 0 8px 18px -8px rgba(204, 74, 24, 0.55);
+  color: var(--color-text);
+  color-scheme: light;
 }
 
-/* Dark values. Also set on the maps in either theme, so points and zones keep one set of colours. */
-[data-theme="dark"] {
-  --color-ink: #0f1215;
-  --color-deck: #12161a;
-  --color-panel: #15191d;
-  --color-raise: #1d2329;
-  --color-line: #252c34;
-  --color-rule: #36404b;
-  --color-control: #6b7783;
-  --color-text: #e8ecef;
-  --color-dim: #a3adb7;
-  --color-faint: #8894a0;
-  --color-signal: #ff5a36;
-  --color-signal-hover: #ff7353;
-  --color-on-signal: #160804;
+/* Dark values: the same warmth, turned down. */
+:root[data-theme="dark"] {
+  --color-ink: #16110e;
+  --color-deck: #1b1512;
+  --color-panel: #201915;
+  --color-raise: #2c221c;
+  --color-line: #33281f;
+  --color-rule: #493a2f;
+  --color-control: #85756a;
+  --color-text: #f4ece6;
+  --color-dim: #bdafa5;
+  --color-faint: #a09187;
+  --color-signal: #ff7c47;
+  --color-signal-hover: #ff9163;
+  --color-on-signal: #1c0a03;
+  --color-brand: #ff8552;
+  --color-tint: #3b2518;
+  --color-bar: #5e3826;
   --color-paper: #ece8dd;
   --color-good: #45d489;
   --color-fair: #f0b545;
@@ -89,52 +135,55 @@
   --color-trip: #38c6f4;
   --color-idle: #f0b545;
   --color-elsewhere: #fb6188;
-  --color-removed: #8894a0;
+  --color-removed: #a09187;
   --color-kestrel: #8bafff;
   --color-pronghorn: #ff8ac4;
   --color-saltgrass: #e3df9f;
   --color-zone-no-parking: #ff8a3d;
   --color-zone-equity: #6fe3c1;
   --color-zone-outside: #b79cff;
-  --page: linear-gradient(180deg, #12161a 0%, #0c0f12 100%);
-  --surface: linear-gradient(180deg, #1a1f25 0%, #15191e 100%);
-  --surface-control: linear-gradient(180deg, #252c34 0%, #1d2329 100%);
-  --surface-signal: linear-gradient(180deg, #ff6a48 0%, #f04a26 100%);
-  --strip: linear-gradient(90deg, #07090b 0%, #1a2027 100%);
-  --side: linear-gradient(180deg, #171b20 0%, #111418 100%);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 24px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.045);
-  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.4), 0 20px 44px -12px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  --shadow-signal: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 16px -6px rgba(255, 90, 54, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  --page: linear-gradient(180deg, #24180f 0, #19130f 16rem, #16110e 30rem);
+  --surface: #201915;
+  --surface-control: #2a211b;
+  --surface-signal: linear-gradient(180deg, #ff8a59 0%, #f96a35 100%);
+  --strip: #2e1d13;
+  --side: rgba(27, 21, 18, 0.88);
+  --wash: linear-gradient(135deg, #2a1c12 0%, #1f1813 60%, #1b1512 100%);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 28px -14px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.4), 0 20px 44px -12px rgba(0, 0, 0, 0.8);
+  --shadow-signal: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 18px -8px rgba(255, 124, 71, 0.45);
   color: var(--color-text);
   color-scheme: dark;
 }
 
 html {
-  background: var(--color-ink);
-  color-scheme: light;
+  background: var(--color-deck);
 }
 body {
   font-family: var(--font-sans);
-  font-size: 0.875rem;
-  line-height: 1.45;
+  font-size: 0.9375rem;
+  line-height: 1.5;
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
-  background: var(--page) fixed, var(--color-ink);
+  background: var(--color-deck);
   -webkit-font-smoothing: antialiased;
 }
 
 @layer components {
   /* The page title, and the sentence under it that says what needs doing. */
   .title {
-    font-size: 1.75rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.35rem + 1.4vw, 2.375rem);
     font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
   }
   .lede {
     max-width: 68ch;
-    font-size: 1rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
     color: var(--color-dim);
   }
   .lede strong {
@@ -147,14 +196,17 @@ body {
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.125rem 0.5rem;
-    border-bottom: 1px solid var(--color-rule);
-    padding-bottom: 0.625rem;
-    font-size: 0.9375rem;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
     font-weight: 600;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.015em;
   }
   .heading small,
   .heading .aside {
+    font-family: var(--font-sans);
+    letter-spacing: 0;
     font-size: 0.8125rem;
     font-weight: 400;
     color: var(--color-faint);
@@ -182,9 +234,9 @@ body {
     align-items: baseline;
     gap: 0.25rem 1rem;
     border-bottom: 1px solid var(--color-line);
-    border-radius: 3px;
-    margin: 0 -0.375rem;
-    padding: 0.625rem 0.375rem;
+    border-radius: 8px;
+    margin: 0 -0.5rem;
+    padding: 0.75rem 0.5rem;
   }
   a.row {
     transition: background 0.11s;
@@ -212,7 +264,7 @@ body {
   .panel {
     background: var(--surface);
     border: 1px solid var(--color-line);
-    border-radius: 12px;
+    border-radius: 18px;
     box-shadow: var(--shadow-md);
   }
   .panel > .heading:first-child {
@@ -224,33 +276,42 @@ body {
     border-bottom: 0;
   }
   .note {
-    border-left: 2px solid var(--color-rule);
-    padding-left: 0.875rem;
+    border-radius: 12px;
+    background: var(--color-raise);
+    padding: 0.75rem 1rem;
   }
   .flash {
-    border-left: 2px solid currentColor;
-    padding: 0.125rem 0 0.125rem 0.875rem;
+    border-radius: 12px;
+    background: color-mix(in srgb, currentColor 9%, var(--color-panel));
+    padding: 0.75rem 1rem;
   }
   .flash > * {
     color: var(--color-text);
   }
   .figure {
+    font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  /* A pale, washed band behind a page's opening figures. */
+  .wash {
+    background: var(--wash);
+    border: 1px solid var(--color-line);
+    border-radius: 22px;
   }
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
-    border-radius: 7px;
+    border-radius: 999px;
     border: 1px solid var(--color-rule);
     background: var(--surface-control);
     box-shadow: var(--shadow-sm);
-    padding: 0.5rem 0.875rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+    padding: 0.5625rem 1.125rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
     color: var(--color-text);
     cursor: pointer;
     transition: border-color 0.11s, background 0.11s;
@@ -264,27 +325,26 @@ body {
   }
   .btn-signal {
     background: var(--surface-signal);
-    border-color: var(--color-signal-hover);
+    border-color: transparent;
     box-shadow: var(--shadow-signal);
     color: var(--color-on-signal);
     font-weight: 600;
   }
   .btn-signal:hover {
-    border-color: var(--color-signal-hover);
+    border-color: transparent;
     filter: brightness(1.06);
   }
   .field {
     width: 100%;
-    border-radius: 7px;
+    border-radius: 10px;
     border: 1px solid var(--color-control);
     background: var(--color-deck);
-    box-shadow: inset 0 1px 2px rgba(22, 28, 36, 0.06);
-    padding: 0.5rem 0.65rem;
-    font-size: 0.875rem;
+    padding: 0.5625rem 0.75rem;
+    font-size: 0.9375rem;
     color: var(--color-text);
   }
   .field:focus {
-    outline: 2px solid var(--color-text);
+    outline: 2px solid var(--color-signal);
     outline-offset: 1px;
   }
   table.grid-table {
@@ -293,15 +353,15 @@ body {
   }
   table.grid-table th {
     text-align: left;
-    padding: 0.5rem 1rem 0.5rem 0;
+    padding: 0.5rem 1rem 0.625rem 0;
     border-bottom: 1px solid var(--color-rule);
     font-size: 0.8125rem;
-    font-weight: 400;
+    font-weight: 500;
     color: var(--color-faint);
     white-space: nowrap;
   }
   table.grid-table td {
-    padding: 0.625rem 1rem 0.625rem 0;
+    padding: 0.75rem 1rem 0.75rem 0;
     border-bottom: 1px solid var(--color-line);
     vertical-align: baseline;
   }
@@ -360,15 +420,15 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-text);
+  outline: 2px solid var(--color-signal);
   outline-offset: 2px;
 }
 
 input[type="range"] {
-  accent-color: var(--color-text);
+  accent-color: var(--color-signal);
 }
 input[type="checkbox"] {
-  accent-color: var(--color-text);
+  accent-color: var(--color-signal);
 }
 
 /* Map chrome */
@@ -383,17 +443,17 @@ input[type="checkbox"] {
 .maplibregl-ctrl-group {
   background: var(--color-panel) !important;
   border: 1px solid var(--color-line);
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-md) !important;
+  overflow: hidden;
 }
 .maplibregl-ctrl-group button + button {
   border-top: 1px solid var(--color-line) !important;
 }
-.maplibregl-ctrl-group button .maplibregl-ctrl-icon {
-  filter: invert(1);
-}
 .deck-tooltip {
-  background: var(--color-ink) !important;
+  background: var(--color-panel) !important;
   border: 1px solid var(--color-line);
-  border-radius: 7px;
+  border-radius: 12px;
   box-shadow: var(--shadow-lg);
   color: var(--color-text) !important;
   font-family: var(--font-sans) !important;
@@ -401,6 +461,80 @@ input[type="checkbox"] {
   line-height: 1.45;
   padding: 8px 10px !important;
   max-width: 260px;
+}
+
+/* A page's opening figures, on a washed band: the number first and large, its name in bold beneath it,
+   then the note. Written outside the layers so it holds whatever padding the cells were given. */
+.stats {
+  background: var(--wash);
+  border: 1px solid var(--color-line);
+  border-radius: 22px;
+  box-shadow: var(--shadow-sm);
+}
+.stats > * {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.375rem 1.5rem 1.25rem;
+}
+.stats dt {
+  order: 2;
+  margin-top: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+.stats dd.figure {
+  order: 1;
+}
+.stats dd:not(.figure) {
+  order: 3;
+  font-size: 0.875rem;
+}
+.stats a:hover {
+  background: color-mix(in srgb, var(--color-brand) 7%, transparent);
+}
+
+/* The public page's first screen: a stock photograph of the city under a pale wash, so dark type reads. */
+.hero-photo {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, var(--color-deck) 90%),
+    linear-gradient(90deg, rgba(255, 247, 241, 0.95) 0%, rgba(255, 247, 241, 0.82) 38%, rgba(255, 247, 241, 0.3) 72%, rgba(255, 247, 241, 0.12) 100%),
+    url("/photos/city-skyline.jpg") center 58% / cover no-repeat;
+}
+[data-theme="dark"] .hero-photo {
+  background:
+    linear-gradient(180deg, rgba(27, 21, 18, 0) 50%, var(--color-deck) 90%),
+    linear-gradient(90deg, rgba(22, 17, 14, 0.94) 0%, rgba(22, 17, 14, 0.8) 38%, rgba(22, 17, 14, 0.35) 72%, rgba(22, 17, 14, 0.2) 100%),
+    url("/photos/city-skyline.jpg") center 58% / cover no-repeat;
+}
+.hero-title {
+  font-size: clamp(2.25rem, 1.4rem + 3.6vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.stats.stats-solid {
+  background: var(--color-panel);
+  box-shadow: var(--shadow-lg);
+}
+@media (max-width: 39.999rem) {
+  .hero-photo {
+    background:
+      linear-gradient(180deg, rgba(255, 247, 241, 0.9) 0%, rgba(255, 247, 241, 0.74) 55%, var(--color-deck) 92%),
+      url("/photos/city-skyline.jpg") center / cover no-repeat;
+  }
+  [data-theme="dark"] .hero-photo {
+    background:
+      linear-gradient(180deg, rgba(22, 17, 14, 0.9) 0%, rgba(22, 17, 14, 0.72) 55%, var(--color-deck) 92%),
+      url("/photos/city-skyline.jpg") center / cover no-repeat;
+  }
+}
+
+/* The page under the header: the peach wash sits at its top and scrolls away with it. */
+.frame-main {
+  background: var(--page) local, var(--color-deck);
 }
 
 @media print {
@@ -426,9 +560,9 @@ input[type="checkbox"] {
 
 /* The label that appears over a vehicle on an evidence map. */
 .evidence-popup .maplibregl-popup-content {
-  background: var(--color-ink);
+  background: var(--color-panel);
   border: 1px solid var(--color-line);
-  border-radius: 7px;
+  border-radius: 12px;
   color: var(--color-text);
   font-size: 13px;
   line-height: 1.45;

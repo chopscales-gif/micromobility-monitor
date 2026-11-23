@@ -33,11 +33,11 @@ export const HOLD_LABELS: Record<HoldReason["code"], string> = {
   record_behind: "Feed was behind",
 };
 
-/** `color` follows the theme; `hex` is for the evidence map, which is drawn dark in either theme. */
+/** `color` follows the theme; `hex` is for the evidence map, which is drawn light in either theme. */
 export const REASONS: Record<MisparkReason, { label: string; color: string; hex: string }> = {
-  no_parking: { label: "In a no-parking zone", color: "var(--color-zone-no-parking)", hex: "#ff8a3d" },
-  no_ride: { label: "In a no-ride zone", color: "var(--color-poor)", hex: "#fb6188" },
-  outside_area: { label: "Outside the service area", color: "var(--color-zone-outside)", hex: "#b79cff" },
+  no_parking: { label: "In a no-parking zone", color: "var(--color-zone-no-parking)", hex: "#d0611c" },
+  no_ride: { label: "In a no-ride zone", color: "var(--color-poor)", hex: "#c8284a" },
+  outside_area: { label: "Outside the service area", color: "var(--color-zone-outside)", hex: "#6a4fc4" },
 };
 
 /** The reference staff and operators quote. */

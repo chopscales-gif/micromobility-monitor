@@ -34,7 +34,7 @@ export default async function ZonesPage({ searchParams }: Props) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] space-y-6 px-4 py-8 lg:px-8">
+    <main className="mx-auto w-full max-w-[84rem] space-y-8 px-4 py-8 lg:px-8 lg:py-11">
       <PageHead title="Policy zones">
         The places where the city&rsquo;s rules change: where vehicles may operate, where they may not be ridden or left, where they must slow down, and where the equity minimum is counted.{" "}
         {mayChange ? "Draw a new zone on the map or upload one as GeoJSON." : "Only the program manager can add or retire zones."}
@@ -67,7 +67,7 @@ export default async function ZonesPage({ searchParams }: Props) {
         const group = inForce.filter((z) => z.type === type);
         const color = ZONE_STYLES[type]?.color ?? "var(--color-dim)";
         return (
-          <section key={type} className="panel px-5 pb-2 pt-4" aria-labelledby={`zones-${type}`}>
+          <section key={type} className="panel px-6 pb-3 pt-5" aria-labelledby={`zones-${type}`}>
             <h2 id={`zones-${type}`} className="heading">
               <span className="inline-flex items-center gap-2">
                 <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ background: color }} />
@@ -129,7 +129,7 @@ export default async function ZonesPage({ searchParams }: Props) {
       })}
 
       {retired.length > 0 && (
-        <section className="panel px-5 pb-2 pt-4">
+        <section className="panel px-6 pb-3 pt-5">
           <h2 className="heading">Retired zones</h2>
           <p className="mt-2.5 text-[0.8125rem] text-dim">No longer applied. Kept because earlier findings were judged against them.</p>
           <div className="mt-1 overflow-x-auto">
