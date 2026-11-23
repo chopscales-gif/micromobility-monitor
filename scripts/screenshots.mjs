@@ -122,7 +122,7 @@ async function main() {
           const el = heading?.closest('section,.panel') ?? heading;
           if (!el) return;
           const scroller = document.querySelector('.frame-main') ?? window;
-          scroller.scrollBy(0, el.getBoundingClientRect().top - 46);
+          scroller.scrollBy(0, el.getBoundingClientRect().top - 108);
         })()`);
         await sleep(600);
       }
