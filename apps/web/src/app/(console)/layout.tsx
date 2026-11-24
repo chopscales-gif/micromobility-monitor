@@ -50,7 +50,7 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
         <div className="no-print text-[0.8125rem] text-text" style={{ background: "var(--strip)" }}>
           <div className="mx-auto flex w-full max-w-[100rem] flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-4 py-2 lg:px-8">
             <p className="leading-snug">
-              <a href="https://haydenhuelskamp.vercel.app/#city-micromobility" className="mr-3 whitespace-nowrap font-semibold underline underline-offset-4">
+              <a href="https://haydenhuelskamp.com/#city-micromobility" className="mr-3 whitespace-nowrap font-semibold underline underline-offset-4">
                 ← All demos
               </a>{" "}
               <strong className="font-semibold">Demonstration.</strong> <span className="text-dim">Simulated data from three fictional operators{clockStopped ? `, recorded and stopped at ${dateTime(clock())}` : ""}. Not used by, or affiliated with, any city.</span>
