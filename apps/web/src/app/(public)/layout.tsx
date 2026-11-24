@@ -14,7 +14,7 @@ export default async function PublicLayout({ children }: { children: React.React
     <>
       <div className="no-print text-[0.8125rem] text-text" style={{ background: "var(--strip)" }}>
         <p className="mx-auto w-full max-w-[76rem] px-4 py-2 leading-snug lg:px-8">
-          <a href="https://chopmedia.vercel.app/#city-micromobility" className="mr-3 whitespace-nowrap font-semibold underline underline-offset-4">
+          <a href="https://haydenhuelskamp.vercel.app/#city-micromobility" className="mr-3 whitespace-nowrap font-semibold underline underline-offset-4">
             ← All demos
           </a>{" "}
           <strong className="font-semibold">Demonstration.</strong> <span className="text-dim">Simulated data from three fictional operators{clockStopped ? `, recorded and stopped at ${dateTime(clock())}` : ""}. Not published by, or affiliated with, any city.</span>
